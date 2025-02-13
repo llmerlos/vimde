@@ -20,6 +20,13 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
   {
+    'rebelot/kanagawa.nvim',
+    priority = 1000,
+    config = function()
+      vim.cmd.colorscheme "kanagawa"
+    end,
+  },
+  {
     "folke/which-key.nvim",
     event = "VeryLazy",
     opts = {
@@ -49,13 +56,35 @@ require('lazy').setup({
     },
   },
   {
+    "akinsho/toggleterm.nvim",
+    keys = {
+      { "<leader>`", ":ToggleTerm direction=float<CR>", desc = "ToggleTerm", },
+    },
+    config = function()
+      require('toggleterm').setup()
+    end,
+  },
+  {
+    'echasnovski/mini.files',
+    config = function()
+      require('mini.files').setup()
+    end,
+    keys = {
+      { "<leader>e", "<cmd>lua MiniFiles.open()<CR>", desc = "[e]xplorer" },
+    },
+  },
+  {
     'echasnovski/mini.tabline',
     config = function()
       require('mini.tabline').setup()
     end,
   },
   {
-    'tpope/vim-sleuth',
+    'echasnovski/mini.statusline',
+    config = function()
+      local statusline = require 'mini.statusline'
+      statusline.setup { use_icons = vim.g.have_nerd_font }
+    end,
   },
   {
     'lewis6991/gitsigns.nvim',
@@ -97,31 +126,6 @@ require('lazy').setup({
         map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
       end,
     }
-  },
-  {
-    "akinsho/toggleterm.nvim",
-    keys = {
-      { "<leader>`", ":ToggleTerm direction=float<CR>", desc = "ToggleTerm", },
-    },
-    config = function()
-      require('toggleterm').setup()
-    end,
-  },
-  {
-    'echasnovski/mini.files',
-    config = function()
-      require('mini.files').setup()
-    end,
-    keys = {
-      { "<leader>e", "<cmd>lua MiniFiles.open()<CR>", desc = "[e]xplorer" },
-    },
-  },
-  {
-    'echasnovski/mini.statusline',
-    config = function()
-      local statusline = require 'mini.statusline'
-      statusline.setup { use_icons = vim.g.have_nerd_font }
-    end,
   },
   {
     'nvim-treesitter/nvim-treesitter',
@@ -166,7 +170,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>ft', builtin.builtin, { desc = '[f]ind [t]elescope picker' })
       vim.keymap.set('n', '<leader>fw', builtin.grep_string, { desc = '[f]ind current [W]ord' })
       vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = '[f]ind by [g]rep' })
-      vim.keymap.set('v', '<leader>fs', '"zy:Telescope live_grep default_text=<c-r>z<cr><esc>', { desc = '[f]ind [s]election' })
+      vim.keymap.set('v', '<leader>fs', '"zy:Telescope live_grep default_text=<c-r>z<cr>', { desc = '[f]ind [s]election' })
       vim.keymap.set('n', '<leader>fd', builtin.diagnostics, { desc = '[f]ind [d]iagnostics' })
       vim.keymap.set('n', '<leader>fr', builtin.resume, { desc = '[f]ind [r]esume' })
       vim.keymap.set('n', '<leader>f.', builtin.oldfiles, { desc = '[f]ind Recent Files ("." for repeat)' })
@@ -232,7 +236,7 @@ require('lazy').setup({
           map('gr', require('telescope.builtin').lsp_references, '[g]oto [r]eferences')
           map('gI', require('telescope.builtin').lsp_implementations, '[g]oto [I]mplementation')
           map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
-          map('<leader>csd', require('telescope.builtin').lsp_document_symbols, '[c]ode [s]ymbols [d]ocument ')
+          map('<leader>co', require('telescope.builtin').lsp_document_symbols, '[c]ode [o]utline')
           map('<leader>csw', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[c]ode [s]ymbols [w]orkspace')
           map('<leader>crn', vim.lsp.buf.rename, '[c]ode [r]e[n]ame')
           map('<leader>ca', vim.lsp.buf.code_action, '[c]ode [a]ction', { 'n', 'x' })
@@ -341,15 +345,6 @@ require('lazy').setup({
         },
       }
     end,
-  },
-  {
-    "hedyhli/outline.nvim",
-    lazy = true,
-    cmd = { "Outline", "OutlineOpen" },
-    keys = {
-      { "<leader>co", "<cmd>Outline<CR>", desc = "[c]ode [o]utline" },
-    },
-    opts = {},
   },
   { -- Autocompletion
     'hrsh7th/nvim-cmp',

@@ -59,13 +59,14 @@ vnoremap    <lt>               <lt>gv
 "" MISC
 nnoremap    U                  <C-R>
 noremap     <silent><ESC>      :set nohls<CR>
-noremap     <leader>cd         :cd %:h<CR>
+noremap     <leader>wc         :cd %:h<CR>
 
 "" SCROLL & NAVIGATION
 noremap     <silent><C-d>      12j
 noremap     <silent><C-u>      12k
 noremap     <silent><C-l>      :bn<CR>
 noremap     <silent><C-h>      :bp<CR>
+noremap     <silent><C-q>      :bd<CR>
 noremap  <silent><leader><Tab> :b <Tab>
 
 "" CONFLICTING KEYMAPS
