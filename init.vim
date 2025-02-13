@@ -36,6 +36,7 @@ if g:env.vsc == 0
     set relativenumber
     set nowrap
     set cursorline
+    set colorcolumn=80
 endif
 
 " REMAPS
@@ -50,10 +51,6 @@ if g:env.vsc
     noremap <leader>vr         <Cmd>lua require('vscode-neovim').action("workbench.action.restartExtensionHost")<CR>
     noremap <leader>ve         :Edit $MYVIMRC<CR>
 endif
-
-" SEARCH (Replaced by plugins)
-noremap    <C-p>               :find *
-noremap    <C-f>               :grep<space>
 
 "" BLOCK INDENT
 vnoremap    >                  >gv
@@ -93,12 +90,12 @@ nnoremap    dd                 "_dd
 noremap     D                  "_D
 noremap     x                  "_x
 noremap     X                  "_X
-noremap     <leader>c          c
-nnoremap    <leader>cc         cc
-noremap     <leader>C          C
-noremap     <leader>d          d
-nnoremap    <leader>dd         dd
-noremap     <leader>D          D
+noremap     <leader><leader>c  c
+nnoremap    <leader><leader>cc cc
+noremap     <leader><leader>C  C
+noremap     <leader><leader>d  d
+nnoremap    <leader><leader>dd dd
+noremap     <leader><leader>D  D
 vnoremap    p                  "_dP
 
 
