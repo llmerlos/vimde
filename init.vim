@@ -5,7 +5,7 @@ let g:env.itj = has('ide')
 let g:env.nvm = g:env.lua && (env.vsc == 0)
 let g:env.vim = (g:env.lua == 0) && (env.itj == 0)
 let g:env.emb = g:env.vsc || g:env.itj
-let g:env.ide = 1 " Change when needed
+let g:env.ide = ($NVIM_APPNAME == 'vimde')
 
 " OPTIONS
 set nocompatible

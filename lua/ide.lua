@@ -82,18 +82,29 @@ require('lazy').setup({
     },
   },
   {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    opts = {
+      sections = {
+        lualine_x = {
+          { "overseer" },
+        },
+      },
+    }
+  },
+  {
     'echasnovski/mini.tabline',
     config = function()
       require('mini.tabline').setup()
     end,
   },
-  {
-    'echasnovski/mini.statusline',
-    config = function()
-      local statusline = require 'mini.statusline'
-      statusline.setup { use_icons = vim.g.have_nerd_font }
-    end,
-  },
+  -- {
+  --   'echasnovski/mini.statusline',
+  --   config = function()
+  --     local statusline = require 'mini.statusline'
+  --     statusline.setup { use_icons = vim.g.have_nerd_font }
+  --   end,
+  -- },
   {
     'lewis6991/gitsigns.nvim',
     opts = {
@@ -177,7 +188,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = '[f]ind [f]iles without hidden' })
       vim.keymap.set('n', '<leader>ft', builtin.builtin, { desc = '[f]ind [t]elescope picker' })
       vim.keymap.set('n', '<leader>fw', builtin.grep_string, { desc = '[f]ind current [W]ord' })
-      vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = '[f]ind by [g]rep' })
+      vim.keymap.set('n', '<leader>fs', builtin.live_grep, { desc = '[f]ind [s]tring' })
       vim.keymap.set('v', '<leader>fs', '"zy:Telescope live_grep default_text=<c-r>z<cr>', { desc = '[f]ind [s]election' })
       vim.keymap.set('n', '<leader>fg', builtin.diagnostics, { desc = '[f]ind dia[g]nostics' })
       vim.keymap.set('n', '<leader>fr', builtin.resume, { desc = '[f]ind [r]esume' })
