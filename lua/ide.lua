@@ -428,8 +428,8 @@ require('lazy').setup({
       { "<F5>", function() require("dap").continue() end, desc = "Run/Continue" },
       { "<leader><F5>", function() require("dap").terminate() end, desc = "Terminate" },
 
-      { "<leader>db", function() require("dap").toggle_breakpoint() end, desc = "Toggle Breakpoint" },
-      { "<leader>dd", function() require("dap").continue() end, desc = "Run/Continue" },
+      { "<leader>dp", function() require("dap").toggle_breakpoint() end, desc = "Toggle Breakpoint" },
+      { "<leader>dc", function() require("dap").continue() end, desc = "Run/Continue" },
       { "<leader>ds", function() require("dap").terminate() end, desc = "Terminate" },
       { "<leader>di", function() require("dap").step_into() end, desc = "Step Into" },
       { "<leader>do", function() require("dap").step_out() end, desc = "Step Out" },
@@ -500,7 +500,7 @@ require('lazy').setup({
     opts = {},
     keys = {
       { "<leader>cb", "<CMD>OverseerToggle<CR>", desc = "[c]ode task [b]ar" },
-      { "<leader>cl", "<CMD>OverseerRun<CR>", desc = "[c]ode [l]aunch task" },
+      { "<leader>cl", "<CMD>OverseerOpen<CR><CMD>OverseerRun<CR>", desc = "[c]ode [l]aunch task" },
     },
   },
 })
