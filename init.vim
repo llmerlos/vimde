@@ -66,7 +66,7 @@ noremap     <silent><C-d>      12j
 noremap     <silent><C-u>      12k
 noremap     <silent><C-l>      :bn<CR>
 noremap     <silent><C-h>      :bp<CR>
-noremap     <silent><C-q>      :bd<CR>
+noremap     <silent><leader>qd :bd<CR>
 noremap  <silent><leader><Tab> :b <Tab>
 
 "" CONFLICTING KEYMAPS
@@ -79,6 +79,10 @@ nnoremap    <silent><A-Up>     :m .-2<CR>==
 nnoremap    <silent><A-Down>   :m .+1<CR>==
 vnoremap    <silent><A-Up>     :m '<-2<CR>gv
 vnoremap    <silent><A-Down>   :m '>+1<CR>gv
+nnoremap    <silent><A-k>      :m .-2<CR>==
+nnoremap    <silent><A-j>      :m .+1<CR>==
+vnoremap    <silent><A-k>      :m '<-2<CR>gv
+vnoremap    <silent><A-j>      :m '>+1<CR>gv
 
 "" CLIPBOARD
 noremap     c                  "_c
