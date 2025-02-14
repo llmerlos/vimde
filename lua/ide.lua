@@ -284,9 +284,9 @@ require('lazy').setup({
           --
           -- This may be unwanted, since they displace some of your code
           if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
-            map('<leader>cth', function()
+            map('<leader>cih', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
-            end, '[c]ode [t]oggle Inlay [h]ints')
+            end, '[c]ode [i]nlay [h]ints')
           end
         end,
       })
@@ -494,6 +494,14 @@ require('lazy').setup({
         dapui.close({})
       end
     end,
+  },
+  {
+    'stevearc/overseer.nvim',
+    opts = {},
+    keys = {
+      { "<leader>cb", "<CMD>OverseerToggle<CR>", desc = "[c]ode task [b]ar" },
+      { "<leader>cl", "<CMD>OverseerRun<CR>", desc = "[c]ode [l]aunch task" },
+    },
   },
 })
 
