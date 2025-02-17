@@ -85,26 +85,21 @@ require('lazy').setup({
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     opts = {
+      -- extensions = {'nvim-dap-ui'},
       sections = {
+        lualine_c = {
+          { "filename", path=1 },
+        },
         lualine_x = {
           { "overseer" },
         },
       },
+      tabline = {
+        lualine_a = { {'buffers', max_legth = vim.o.columns }},
+        lualine_z = {'tabs'}
+      }
     }
   },
-  {
-    'echasnovski/mini.tabline',
-    config = function()
-      require('mini.tabline').setup()
-    end,
-  },
-  -- {
-  --   'echasnovski/mini.statusline',
-  --   config = function()
-  --     local statusline = require 'mini.statusline'
-  --     statusline.setup { use_icons = vim.g.have_nerd_font }
-  --   end,
-  -- },
   {
     'lewis6991/gitsigns.nvim',
     opts = {
@@ -190,7 +185,8 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>fw', builtin.grep_string, { desc = '[f]ind current [W]ord' })
       vim.keymap.set('n', '<leader>fs', builtin.live_grep, { desc = '[f]ind [s]tring' })
       vim.keymap.set('v', '<leader>fs', '"zy:Telescope live_grep default_text=<c-r>z<cr>', { desc = '[f]ind [s]election' })
-      vim.keymap.set('n', '<leader>fg', builtin.diagnostics, { desc = '[f]ind dia[g]nostics' })
+      vim.keymap.set('n', '<leader>fg', builtin.git_status, { desc = '[f]ind [g]it modified files' })
+      vim.keymap.set('n', '<leader>fG', builtin.diagnostics, { desc = '[f]ind dia[G]nostics' })
       vim.keymap.set('n', '<leader>fr', builtin.resume, { desc = '[f]ind [r]esume' })
       vim.keymap.set('n', '<leader>f.', builtin.oldfiles, { desc = '[f]ind Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader>fo', builtin.buffers, { desc = '[f]ind [o]pen buffers' })
@@ -440,11 +436,11 @@ require('lazy').setup({
       { "<leader><F5>", function() require("dap").terminate() end, desc = "Terminate" },
 
       { "<leader>dp", function() require("dap").toggle_breakpoint() end, desc = "Toggle Breakpoint" },
-      { "<leader>dc", function() require("dap").continue() end, desc = "Run/Continue" },
-      { "<leader>ds", function() require("dap").terminate() end, desc = "Terminate" },
-      { "<leader>di", function() require("dap").step_into() end, desc = "Step Into" },
-      { "<leader>do", function() require("dap").step_out() end, desc = "Step Out" },
-      { "<leader>dv", function() require("dap").step_over() end, desc = "Step Over" },
+      { "<leader>dc", function() require("dap").continue() end, desc = "[d]ebug [c]ontinue" },
+      { "<leader>ds", function() require("dap").terminate() end, desc = "[d]ebug [s]top" },
+      { "<leader>di", function() require("dap").step_into() end, desc = "[d]ebug step [i]nto" },
+      { "<leader>do", function() require("dap").step_out() end, desc = "[d]ebug step [o]ut" },
+      { "<leader>df", function() require("dap").step_over() end, desc = "[d]ebug step over [f]" },
       { "<leader>dP", function() require("dap").pause() end, desc = "Pause" },
 
       -- { "<leader>da", function() require("dap").continue({ before = get_args }) end, desc = "Run with Args" },
@@ -487,10 +483,41 @@ require('lazy').setup({
       "nvim-neotest/nvim-nio"
     },
     keys = {
-      { "<leader>du", function() require("dapui").toggle({ }) end, desc = "[d]ap [u]I" },
+      { "<leader>du",
+        function()
+          require("overseer").close()
+          require("dapui").toggle({ })
+        end, desc = "[d]ap [u]I" },
       { "<leader>de", function() require("dapui").eval() end, desc = "[d]ap [e]val", mode = {"n", "v"} },
     },
-    opts = {},
+    opts = {
+      layouts = {
+      {
+        elements = { {
+            id = "breakpoints", size = 0.2
+          }, {
+            id = "scopes", size = 0.40
+          }, {
+            id = "stacks", size = 0.2
+          }, {
+            id = "watches", size = 0.2
+          } },
+        position = "left",
+        size = 40
+      },
+      -- {
+      --   elements = { {
+      --       id = "repl",
+      --       size = 0.5
+      --     }, {
+      --       id = "console",
+      --       size = 0.5
+      --     } },
+      --   position = "bottom",
+      --   size = 10
+      -- }
+      },
+    },
     config = function(_, opts)
       local dap = require("dap")
       local dapui = require("dapui")

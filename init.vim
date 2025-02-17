@@ -68,6 +68,18 @@ noremap     <silent><C-l>      :bn<CR>
 noremap     <silent><C-h>      :bp<CR>
 noremap     <silent><leader>qd :bd<CR>
 noremap  <silent><leader><Tab> :b <Tab>
+noremap     mq                 mQ
+noremap     mw                 mW
+noremap     me                 mE
+noremap     mr                 mR
+noremap     'q                 'Q
+noremap     'w                 'W
+noremap     'e                 'E
+noremap     'r                 'R
+noremap     `q                 `Q
+noremap     `w                 `W
+noremap     `e                 `E
+noremap     `r                 `R
 
 "" CONFLICTING KEYMAPS
 noremap     <C-s>              :w<CR>
