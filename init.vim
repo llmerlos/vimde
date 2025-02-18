@@ -68,6 +68,7 @@ noremap     <silent><C-l>      :bn<CR>
 noremap     <silent><C-h>      :bp<CR>
 noremap     <silent><leader>qd :bd<CR>
 noremap  <silent><leader><Tab> :b <Tab>
+noremap     Q                  @q
 noremap     mq                 mQ
 noremap     mw                 mW
 noremap     me                 mE
