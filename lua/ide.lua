@@ -24,10 +24,21 @@ require('lazy').setup({
     lazy = false,
     priority = 1000,
     config = function()
-      vim.g.gruvbox_material_background = 'hard'
+      vim.g.gruvbox_material_background = 'medium'
       vim.g.gruvbox_material_foreground = 'original'
       vim.cmd.colorscheme('gruvbox-material')
     end
+  },
+  {
+    "folke/zen-mode.nvim",
+    opts = {
+      plugins = {
+        tmux = { enabled = true }
+      }
+    },
+    keys = {
+      { "<leader>qz", "<CMD>ZenMode<CR>", desc = "Toggle [z]en mode" },
+    },
   },
   {
     'rebelot/kanagawa.nvim',
@@ -47,6 +58,7 @@ require('lazy').setup({
         { '<leader>f', group = '[f]ind' },
         { '<leader>v', group = '[v]imrc' },
         { '<leader>w', group = '[w]orkspace' },
+        { '<leader>q', group = '[q]ustom' },
         { '<leader><leader>', group = 'compat' },
         { '<leader>g', group = '[g]it', mode = { 'n', 'v' } },
       },

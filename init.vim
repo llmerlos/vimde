@@ -36,7 +36,7 @@ if g:env.vsc == 0
     set relativenumber
     set nowrap
     set cursorline
-    set colorcolumn=80
+    "set colorcolumn=80
 endif
 
 " REMAPS
@@ -73,14 +73,17 @@ noremap     mq                 mQ
 noremap     mw                 mW
 noremap     me                 mE
 noremap     mr                 mR
+noremap     mt                 mT
 noremap     'q                 'Q
 noremap     'w                 'W
 noremap     'e                 'E
 noremap     'r                 'R
+noremap     't                 'T
 noremap     `q                 `Q
 noremap     `w                 `W
 noremap     `e                 `E
 noremap     `r                 `R
+noremap     `t                 `T
 
 "" CONFLICTING KEYMAPS
 noremap     <C-s>              :w<CR>
