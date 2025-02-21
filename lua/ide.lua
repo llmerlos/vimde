@@ -53,19 +53,24 @@ require('lazy').setup({
     opts = {
       delay = 500,
       spec = {
-        { '<leader>c', group = '[c]ode',     mode = { 'n', 'x' } },
+        { '<leader><leader>', group = 'compat' },
+        { '<leader>c', group = '[c]ode'},
         { '<leader>d', group = '[d]ebug' },
         { '<leader>f', group = '[f]ind' },
+        { '<leader>g', group = '[g]it', mode = { 'n', 'v' } },
+        { '<leader>q', group = '[q]ustom' },
+        { '<leader>r', group = '[r]un'},
         { '<leader>v', group = '[v]imrc' },
         { '<leader>w', group = '[w]orkspace' },
-        { '<leader>q', group = '[q]ustom' },
-        { '<leader><leader>', group = 'compat' },
-        { '<leader>g', group = '[g]it', mode = { 'n', 'v' } },
       },
     },
     keys = {
       { "<leader>?", function() require("which-key").show({ global = true }) end, desc = "Buffer Local Keymaps (which-key)", },
     },
+  },
+  {
+    'echasnovski/mini.pairs',
+    opts = {},
   },
   {
     "folke/persistence.nvim",
@@ -168,7 +173,7 @@ require('lazy').setup({
     build = ':TSUpdate',
     main = 'nvim-treesitter.configs',
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'python', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
       auto_install = true,
       highlight = {
         enable = true,
@@ -453,10 +458,6 @@ require('lazy').setup({
 
     -- stylua: ignore
     keys = {
-      { "<F9>", function() require("dap").toggle_breakpoint() end, desc = "Toggle Breakpoint" },
-      { "<F5>", function() require("dap").continue() end, desc = "Run/Continue" },
-      { "<leader><F5>", function() require("dap").terminate() end, desc = "Terminate" },
-
       { "<leader>dp", function() require("dap").toggle_breakpoint() end, desc = "Toggle Breakpoint" },
       { "<leader>dc", function() require("dap").continue() end, desc = "[d]ebug [c]ontinue" },
       { "<leader>ds", function() require("dap").terminate() end, desc = "[d]ebug [s]top" },
@@ -512,34 +513,7 @@ require('lazy').setup({
         end, desc = "[d]ap [u]I" },
       { "<leader>de", function() require("dapui").eval() end, desc = "[d]ap [e]val", mode = {"n", "v"} },
     },
-    opts = {
-      layouts = {
-      {
-        elements = { {
-            id = "breakpoints", size = 0.2
-          }, {
-            id = "scopes", size = 0.40
-          }, {
-            id = "stacks", size = 0.2
-          }, {
-            id = "watches", size = 0.2
-          } },
-        position = "left",
-        size = 40
-      },
-      -- {
-      --   elements = { {
-      --       id = "repl",
-      --       size = 0.5
-      --     }, {
-      --       id = "console",
-      --       size = 0.5
-      --     } },
-      --   position = "bottom",
-      --   size = 10
-      -- }
-      },
-    },
+    opts = {},
     config = function(_, opts)
       local dap = require("dap")
       local dapui = require("dapui")
@@ -559,8 +533,9 @@ require('lazy').setup({
     'stevearc/overseer.nvim',
     opts = {},
     keys = {
-      { "<leader>cb", "<CMD>OverseerToggle<CR>", desc = "[c]ode task [b]ar" },
-      { "<leader>cl", "<CMD>OverseerOpen<CR><CMD>OverseerRun<CR>", desc = "[c]ode [l]aunch task" },
+      { "<leader>rR", "<CMD>OverseerToggle<CR>", desc = "[r]un toggle [R]" },
+      { "<leader>rr", "<CMD>OverseerRun Build<CR>", desc = "[r]un build [r]" },
+      { "<leader>rt", "<CMD>OverseerOpen<CR><CMD>OverseerRun<CR>", desc = "[r]un [t]ask" },
     },
   },
 })
