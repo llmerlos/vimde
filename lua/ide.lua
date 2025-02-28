@@ -26,8 +26,32 @@ require('lazy').setup({
     config = function()
       vim.g.gruvbox_material_background = 'medium'
       vim.g.gruvbox_material_foreground = 'original'
-      vim.cmd.colorscheme('gruvbox-material')
+      -- vim.cmd.colorscheme('gruvbox-material')
     end
+  },
+  {
+    'rebelot/kanagawa.nvim',
+    priority = 1000,
+    config = function()
+      -- vim.cmd.colorscheme "kanagawa"
+    end,
+  },
+  {
+    'alexxGmZ/e-ink.nvim',
+    priority = 1000,
+    config = function()
+      vim.opt.background = "dark"
+      vim.cmd.colorscheme "e-ink"
+    end,
+  },
+  {
+    "laktak/tome",
+    opts = { },
+    keys = {
+      { "<Leader>p", "<Plug>(TomePlayLine)", mode = {"n"}, desc = "[p]lay line"},
+      { "<Leader>P", "<Plug>(TomePlayParagraph)", mode = {"n"}, desc = "play [P]aragraph"},
+      { "<Leader>p", "<Plug>(TomePlaySelection)", mode = {"x"},desc = "[p]lay selection"},
+    },
   },
   {
     "folke/zen-mode.nvim",
@@ -39,13 +63,6 @@ require('lazy').setup({
     keys = {
       { "<leader>qz", "<CMD>ZenMode<CR>", desc = "Toggle [z]en mode" },
     },
-  },
-  {
-    'rebelot/kanagawa.nvim',
-    priority = 1000,
-    config = function()
-      -- vim.cmd.colorscheme "kanagawa"
-    end,
   },
   {
     "folke/which-key.nvim",
@@ -69,8 +86,14 @@ require('lazy').setup({
     },
   },
   {
-    'echasnovski/mini.pairs',
+    "folke/todo-comments.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    lazy = false,
     opts = {},
+    keys = {
+      { "]t", function() require("todo-comments").jump_next() end,  desc = "Next [t]odo comment"},
+      { "[t", function() require("todo-comments").jump_prev() end,  desc = "Prev [t]odo comment"},
+    }
   },
   {
     "folke/persistence.nvim",
@@ -458,23 +481,23 @@ require('lazy').setup({
 
     -- stylua: ignore
     keys = {
-      { "<leader>dp", function() require("dap").toggle_breakpoint() end, desc = "Toggle Breakpoint" },
-      { "<leader>dc", function() require("dap").continue() end, desc = "[d]ebug [c]ontinue" },
-      { "<leader>ds", function() require("dap").terminate() end, desc = "[d]ebug [s]top" },
-      { "<leader>di", function() require("dap").step_into() end, desc = "[d]ebug step [i]nto" },
-      { "<leader>do", function() require("dap").step_out() end, desc = "[d]ebug step [o]ut" },
-      { "<leader>df", function() require("dap").step_over() end, desc = "[d]ebug step over [f]" },
-      { "<leader>dP", function() require("dap").pause() end, desc = "Pause" },
+      { "<leader>dp", function() require("dap").toggle_breakpoint() end, desc = "[d]ebug break[p]oint" },
+      { "<leader>df", function() require("dap").continue() end, desc = "[d]ebug continue [f]" },
+      { "<leader>ds", function() require("dap").terminate() end, desc = "[d]ebug terminate [s]" },
+      { "<leader>dj", function() require("dap").step_into() end, desc = "[d]ebug step into [j]" },
+      { "<leader>dk", function() require("dap").step_out() end, desc = "[d]ebug step out [k]" },
+      { "<leader>dl", function() require("dap").step_over() end, desc = "[d]ebug step over [l]" },
+      { "<leader>dh", function() require("dap").pause() end, desc = "[d]ebug pause [h]" },
 
       -- { "<leader>da", function() require("dap").continue({ before = get_args }) end, desc = "Run with Args" },
-      { "<leader>dC", function() require("dap").run_to_cursor() end, desc = "Run to Cursor" },
-      { "<leader>dg", function() require("dap").goto_() end, desc = "Go to Line (No Execute)" },
-      { "<leader>dj", function() require("dap").down() end, desc = "Down" },
-      { "<leader>dk", function() require("dap").up() end, desc = "Up" },
-      { "<leader>dl", function() require("dap").run_last() end, desc = "Run Last" },
-      { "<leader>dr", function() require("dap").repl.toggle() end, desc = "Toggle REPL" },
-      { "<leader>dS", function() require("dap").session() end, desc = "Session" },
-      { "<leader>dw", function() require("dap.ui.widgets").hover() end, desc = "Widgets" },
+      -- { "<leader>dC", function() require("dap").run_to_cursor() end, desc = "Run to Cursor" },
+      -- { "<leader>dg", function() require("dap").goto_() end, desc = "Go to Line (No Execute)" },
+      -- { "<leader>dj", function() require("dap").down() end, desc = "Down" },
+      -- { "<leader>dk", function() require("dap").up() end, desc = "Up" },
+      -- { "<leader>dl", function() require("dap").run_last() end, desc = "Run Last" },
+      -- { "<leader>dr", function() require("dap").repl.toggle() end, desc = "Toggle REPL" },
+      -- { "<leader>dS", function() require("dap").session() end, desc = "Session" },
+      -- { "<leader>dw", function() require("dap.ui.widgets").hover() end, desc = "Widgets" },
     },
 
     config = function()
@@ -506,26 +529,25 @@ require('lazy').setup({
       "nvim-neotest/nvim-nio"
     },
     keys = {
-      { "<leader>du",
-        function()
-          require("overseer").close()
-          require("dapui").toggle({ })
-        end, desc = "[d]ap [u]I" },
-      { "<leader>de", function() require("dapui").eval() end, desc = "[d]ap [e]val", mode = {"n", "v"} },
+      { "<leader>du", function() require("overseer").close() require("dapui").toggle({ }) end, desc = "[d]ebug [u]I" },
+      { "<leader>de", function() require("dapui").eval() end, desc = "[d]ebug [e]val", mode = {"n", "v"} },
     },
     opts = {},
     config = function(_, opts)
       local dap = require("dap")
       local dapui = require("dapui")
       dapui.setup(opts)
-      dap.listeners.after.event_initialized["dapui_config"] = function()
-        dapui.open({})
+      dap.listeners.before.attach.dapui_config = function()
+        dapui.open()
       end
-      dap.listeners.before.event_terminated["dapui_config"] = function()
-        dapui.close({})
+      dap.listeners.before.launch.dapui_config = function()
+        dapui.open()
       end
-      dap.listeners.before.event_exited["dapui_config"] = function()
-        dapui.close({})
+      dap.listeners.before.event_terminated.dapui_config = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited.dapui_config = function()
+        dapui.close()
       end
     end,
   },
@@ -533,9 +555,9 @@ require('lazy').setup({
     'stevearc/overseer.nvim',
     opts = {},
     keys = {
-      { "<leader>rR", "<CMD>OverseerToggle<CR>", desc = "[r]un toggle [R]" },
-      { "<leader>rr", "<CMD>OverseerRun Build<CR>", desc = "[r]un build [r]" },
-      { "<leader>rt", "<CMD>OverseerOpen<CR><CMD>OverseerRun<CR>", desc = "[r]un [t]ask" },
+      { "<leader>b", "<CMD>OverseerRun Build<CR>", desc = "[b]uild" },
+      { "<leader>qtl", "<CMD>OverseerOpen<CR><CMD>OverseerRun<CR>", desc = "[q]ustom [t]ask [l] launch" },
+      { "<leader>qtu", "<CMD>OverseerToggle<CR>", desc = "[q]ustom [t]ask [u]i" },
     },
   },
 })

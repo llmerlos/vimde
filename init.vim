@@ -62,6 +62,10 @@ noremap     <silent><ESC>      :set nohls<CR>
 noremap     <leader>wc         :cd %:h<CR>
 
 "" SCROLL & NAVIGATION
+noremap     <Up>               <Nop>
+noremap     <Down>             <Nop>
+noremap     <Left>             <Nop>
+noremap     <Right>            <Nop>
 noremap     <silent><C-d>      12j
 noremap     <silent><C-u>      12k
 noremap     <silent><C-l>      :bn<CR>
