@@ -26,23 +26,8 @@ require('lazy').setup({
     config = function()
       vim.g.gruvbox_material_background = 'medium'
       vim.g.gruvbox_material_foreground = 'original'
-      -- vim.cmd.colorscheme('gruvbox-material')
+      vim.cmd.colorscheme('gruvbox-material')
     end
-  },
-  {
-    'rebelot/kanagawa.nvim',
-    priority = 1000,
-    config = function()
-      -- vim.cmd.colorscheme "kanagawa"
-    end,
-  },
-  {
-    'alexxGmZ/e-ink.nvim',
-    priority = 1000,
-    config = function()
-      vim.opt.background = "dark"
-      vim.cmd.colorscheme "e-ink"
-    end,
   },
   {
     "laktak/tome",
@@ -145,7 +130,7 @@ require('lazy').setup({
         },
       },
       tabline = {
-        lualine_a = { {'buffers', max_legth = vim.o.columns }},
+        lualine_a = { {'buffers', max_length = function () return vim.o.columns end }},
         lualine_z = {'tabs'}
       }
     }
