@@ -36,7 +36,7 @@ if g:env.vsc == 0
     set relativenumber
     set nowrap
     set cursorline
-    "set colorcolumn=80
+    set colorcolumn=120
 endif
 
 " REMAPS
