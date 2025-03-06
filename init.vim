@@ -70,7 +70,7 @@ noremap     <silent><C-d>      12j
 noremap     <silent><C-u>      12k
 noremap     <silent><C-l>      :bn<CR>
 noremap     <silent><C-h>      :bp<CR>
-noremap     <silent><leader>qd :bd<CR>
+noremap     X                  :bd<CR>
 noremap  <silent><leader><Tab> :b <Tab>
 noremap     Q                  @q
 noremap     mq                 mQ
@@ -114,7 +114,6 @@ noremap     d                  "_d
 nnoremap    dd                 "_dd
 noremap     D                  "_D
 noremap     x                  "_x
-noremap     X                  "_X
 noremap     <leader><leader>c  c
 nnoremap    <leader><leader>cc cc
 noremap     <leader><leader>C  C

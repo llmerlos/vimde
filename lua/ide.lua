@@ -134,9 +134,17 @@ require("lazy").setup({
 		},
 		opts = {
 			close_if_last_window = true,
+			filesystem = {
+				filtered_items = {
+					visible = true, -- when true, they will just be displayed differently than normal items
+					hide_dotfiles = false,
+					hide_gitignored = false,
+					hide_hidden = false,
+				},
+			},
 		},
 		keys = {
-			{ "<leader>e", "<cmd>Neotree<CR>", desc = "Open [e]xplorer" },
+			{ "<leader>e", "<cmd>Neotree reveal<CR>", desc = "Open [e]xplorer" },
 			{ "<leader>E", "<cmd>Neotree close<CR>", desc = "Close [E]xplorer" },
 		},
 	},
@@ -522,9 +530,6 @@ require("lazy").setup({
 			formatters_by_ft = {
 				lua = { "stylua" },
 				c = { "clang-format" },
-				-- Conform can also run multiple formatters sequentially
-				-- python = { "isort", "black" },
-				--
 				-- You can use 'stop_after_first' to run the first available formatter from the list
 				-- javascript = { "prettierd", "prettier", stop_after_first = true },
 			},
@@ -576,19 +581,14 @@ require("lazy").setup({
 	--------------------------DAP-------------------
 	{
 		"mfussenegger/nvim-dap",
-		recommended = true,
 		desc = "Debugging support. Requires language specific adapters to be configured. (see lang extras)",
-
 		dependencies = {
-			"rcarriga/nvim-dap-ui",
-			-- virtual text for the debugger
 			{
 				"theHamsta/nvim-dap-virtual-text",
 				opts = {},
 			},
 			"jay-babu/mason-nvim-dap.nvim",
 		},
-
     -- stylua: ignore
     keys = {
       { "<leader>dp", function() require("dap").toggle_breakpoint() end, desc = "[d]ebug break[p]oint" },
@@ -646,7 +646,40 @@ require("lazy").setup({
 				mode = { "n", "v" },
 			},
 		},
-		opts = {},
+		opts = {
+			layouts = {
+				{
+					elements = {
+						{
+							id = "repl",
+							size = 0.10,
+						},
+						{
+							id = "scopes",
+							size = 0.60,
+						},
+						{
+							id = "breakpoints",
+							size = 0.10,
+						},
+						{
+							id = "stacks",
+							size = 0.10,
+						},
+						{
+							id = "watches",
+							size = 0.10,
+						},
+						-- {
+						-- 	id = "console",
+						-- 	size = 0.10,
+						-- },
+					},
+					position = "right",
+					size = 40,
+				},
+			},
+		},
 		config = function(_, opts)
 			local dap = require("dap")
 			local dapui = require("dapui")
