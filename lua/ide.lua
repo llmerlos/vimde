@@ -71,7 +71,9 @@ require("lazy").setup({
 		"folke/todo-comments.nvim",
 		dependencies = { "nvim-lua/plenary.nvim" },
 		lazy = false,
-		opts = {},
+		opts = {
+			keywords = { WIP = { icon = " ", color = "hint" } },
+		},
 		keys = {
 			{
 				"]t",
@@ -86,6 +88,16 @@ require("lazy").setup({
 					require("todo-comments").jump_prev()
 				end,
 				desc = "Prev [t]odo comment",
+			},
+			{
+				"<leader>fn",
+				"<CMD>TodoTelescope keywords=WIP<CR>",
+				desc = "[f]ind wip [n]otes",
+			},
+			{
+				"<leader>ft",
+				"<CMD>TodoTelescope<CR>",
+				desc = "[f]ind [t]odos",
 			},
 		},
 	},
@@ -331,7 +343,7 @@ require("lazy").setup({
 				{ desc = "[f]in[d] files" }
 			)
 			vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "[f]ind [f]iles without hidden" })
-			vim.keymap.set("n", "<leader>ft", builtin.builtin, { desc = "[f]ind [t]elescope picker" })
+			vim.keymap.set("n", "<leader>fp", builtin.builtin, { desc = "[f]ind telescope [p]icker" })
 			vim.keymap.set("n", "<leader>fw", builtin.grep_string, { desc = "[f]ind current [W]ord" })
 			vim.keymap.set("n", "<leader>fs", builtin.live_grep, { desc = "[f]ind [s]tring" })
 			vim.keymap.set(
