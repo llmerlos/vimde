@@ -143,10 +143,18 @@ require("lazy").setup({
 			"nvim-lua/plenary.nvim",
 			"nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
 			"MunifTanjim/nui.nvim",
+			{
+				"echasnovski/mini.bufremove",
+				opts = {},
+				keys = {
+					{ "X", "<cmd>lua MiniBufremove.delete()<CR>", desc = "Delete buffer [X]" },
+				},
+			},
 		},
 		opts = {
-			close_if_last_window = true,
+			-- close_if_last_window = true, -- Its buggy and closes neovim when bd
 			filesystem = {
+				follow_current_file = { enabled = true },
 				filtered_items = {
 					visible = true, -- when true, they will just be displayed differently than normal items
 					hide_dotfiles = false,
@@ -336,21 +344,47 @@ require("lazy").setup({
 			local builtin = require("telescope.builtin")
 			vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "[f]ind [h]elp" })
 			vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "[f]ind [k]eymaps" })
+			vim.keymap.set("n", "<leader>fp", builtin.builtin, { desc = "[f]ind telescope [p]icker" })
+			vim.keymap.set("n", "<leader>fw", builtin.grep_string, { desc = "[f]ind current [W]ord" })
 			vim.keymap.set(
 				"n",
 				"<leader>fd",
-				"<CMD>Telescope find_files find_command=rg,--files,--hidden,-g,!.git <CR>",
+				"<CMD>Telescope find_files find_command=fd<CR>",
 				{ desc = "[f]in[d] files" }
 			)
-			vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "[f]ind [f]iles without hidden" })
-			vim.keymap.set("n", "<leader>fp", builtin.builtin, { desc = "[f]ind telescope [p]icker" })
-			vim.keymap.set("n", "<leader>fw", builtin.grep_string, { desc = "[f]ind current [W]ord" })
-			vim.keymap.set("n", "<leader>fs", builtin.live_grep, { desc = "[f]ind [s]tring" })
+			vim.keymap.set(
+				"n",
+				"<leader>fD",
+				"<CMD>Telescope find_files find_command=fd,--hidden<CR>",
+				{ desc = "[f]ind including (hi[D]den) files" }
+			)
+			vim.keymap.set(
+				"n",
+				"<leader>fiD",
+				"<CMD>Telescope find_files find_command=fd,--hidden,--no-ignore<CR>",
+				{ desc = "[f]ind including ([i]gnored hi[D]den) files" }
+			)
+			vim.keymap.set("n", "<leader>fs", function()
+				builtin.live_grep({ additional_args = { "--hidden" } })
+			end, { desc = "[f]ind [s]tring" })
 			vim.keymap.set(
 				"v",
 				"<leader>fs",
-				'"zy:Telescope live_grep default_text=<c-r>z<cr>',
+				'"zy:lua require("telescope.builtin").live_grep({additional_args = {"--hidden"}})<CR><c-r>z',
 				{ desc = "[f]ind [s]election" }
+			)
+			vim.keymap.set("n", "<leader>fa", function()
+				builtin.live_grep({
+					additional_args = function()
+						return { "--hidden", "--no-ignore" }
+					end,
+				})
+			end, { desc = "[f]ind string in [a]ll files (no ignore)" })
+			vim.keymap.set(
+				"v",
+				"<leader>fa",
+				'"zy:lua require("telescope.builtin").live_grep({additional_args = {"--hidden", "--no-ignore"}})<CR><c-r>z',
+				{ desc = "[f]ind selection in [a]ll files" }
 			)
 			vim.keymap.set("n", "<leader>fg", builtin.git_status, { desc = "[f]ind [g]it modified files" })
 			vim.keymap.set("n", "<leader>fG", builtin.diagnostics, { desc = "[f]ind dia[G]nostics" })
@@ -473,7 +507,9 @@ require("lazy").setup({
 			capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
 			local servers = {
-				-- clangd = {},
+				clangd = {
+					filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
+				},
 				lua_ls = {
 					settings = {
 						Lua = {
@@ -519,6 +555,15 @@ require("lazy").setup({
 				mode = "",
 				desc = "[c]ode [f]ormat buffer",
 			},
+			{
+				"<leader>cF",
+				function()
+					vim.g.disable_autoformat = not vim.g.disable_autoformat
+					print("Format on save: " .. tostring(not vim.g.disable_autoformat))
+				end,
+				mode = "",
+				desc = "[c]ode toggle [F]ormat on save",
+			},
 		},
 		opts = {
 			notify_on_error = false,
@@ -527,6 +572,9 @@ require("lazy").setup({
 				-- have a well standardized coding style. You can add additional
 				-- languages here or re-enable it for the disabled ones.
 				-- local disable_filetypes = { c = true, cpp = true }
+				if vim.g.disable_autoformat then
+					return
+				end
 				local disable_filetypes = {} --{ c = true, cpp = true }
 				local lsp_format_opt
 				if disable_filetypes[vim.bo[bufnr].filetype] then
