@@ -52,7 +52,6 @@ require("lazy").setup({
 				{ "<leader>g", group = "[g]it", mode = { "n", "v" } },
 				{ "<leader>q", group = "[q]ustom" },
 				{ "<leader>t", group = "[t]asks" },
-				{ "<leader>r", group = "[r]un" },
 				{ "<leader>v", group = "[v]imrc" },
 				{ "<leader>w", group = "[w]orkspace" },
 			},
@@ -345,7 +344,6 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "[f]ind [h]elp" })
 			vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "[f]ind [k]eymaps" })
 			vim.keymap.set("n", "<leader>fp", builtin.builtin, { desc = "[f]ind telescope [p]icker" })
-			vim.keymap.set("n", "<leader>fw", builtin.grep_string, { desc = "[f]ind current [W]ord" })
 			vim.keymap.set(
 				"n",
 				"<leader>fd",
@@ -354,37 +352,46 @@ require("lazy").setup({
 			)
 			vim.keymap.set(
 				"n",
-				"<leader>fD",
+				"<leader>ff",
 				"<CMD>Telescope find_files find_command=fd,--hidden<CR>",
-				{ desc = "[f]ind including (hi[D]den) files" }
+				{ desc = "[f]ind including (hidden) [f]iles" }
 			)
 			vim.keymap.set(
 				"n",
-				"<leader>fiD",
+				"<leader>fF",
 				"<CMD>Telescope find_files find_command=fd,--hidden,--no-ignore<CR>",
-				{ desc = "[f]ind including ([i]gnored hi[D]den) files" }
+				{ desc = "[f]ind including (ignored hidden) [F]iles" }
+			)
+			vim.keymap.set("n", "<leader>fa", function()
+				builtin.live_grep({ additional_args = {} })
+			end, { desc = "[f]ind string in files [a]" })
+			vim.keymap.set(
+				"v",
+				"<leader>fa",
+				'"zy<CMD>lua require("telescope.builtin").live_grep({additional_args = {}})<CR><c-r>z',
+				{ desc = "[f]ind selection in files [a]" }
 			)
 			vim.keymap.set("n", "<leader>fs", function()
 				builtin.live_grep({ additional_args = { "--hidden" } })
-			end, { desc = "[f]ind [s]tring" })
+			end, { desc = "[f]ind [s]tring in files (--hidden)" })
 			vim.keymap.set(
 				"v",
 				"<leader>fs",
-				'"zy:lua require("telescope.builtin").live_grep({additional_args = {"--hidden"}})<CR><c-r>z',
-				{ desc = "[f]ind [s]election" }
+				'"zy<CMD>lua require("telescope.builtin").live_grep({additional_args = {"--hidden"}})<CR><c-r>z',
+				{ desc = "[f]ind [s]election in files (--hidden)" }
 			)
-			vim.keymap.set("n", "<leader>fa", function()
+			vim.keymap.set("n", "<leader>fS", function()
 				builtin.live_grep({
 					additional_args = function()
 						return { "--hidden", "--no-ignore" }
 					end,
 				})
-			end, { desc = "[f]ind string in [a]ll files (no ignore)" })
+			end, { desc = "[f]ind [S]tring in files (--hidden --no-ignore)" })
 			vim.keymap.set(
 				"v",
-				"<leader>fa",
-				'"zy:lua require("telescope.builtin").live_grep({additional_args = {"--hidden", "--no-ignore"}})<CR><c-r>z',
-				{ desc = "[f]ind selection in [a]ll files" }
+				"<leader>fS",
+				'"zy<CMD>lua require("telescope.builtin").live_grep({additional_args = {"--hidden", "--no-ignore"}})<CR><c-r>z',
+				{ desc = "[f]ind [S]election in files (--hidden --no-ignore)" }
 			)
 			vim.keymap.set("n", "<leader>fg", builtin.git_status, { desc = "[f]ind [g]it modified files" })
 			vim.keymap.set("n", "<leader>fG", builtin.diagnostics, { desc = "[f]ind dia[G]nostics" })
@@ -524,7 +531,12 @@ require("lazy").setup({
 
 			local ensure_installed = vim.tbl_keys(servers or {})
 			vim.list_extend(ensure_installed, {
-				-- 'stylua', -- Used to format Lua code
+				"stylua", -- Used to format Lua code
+				"cortex-debug",
+				"buf_lsp",
+				"clang-format",
+				"debugpy",
+				"pylsp",
 			})
 			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
