@@ -533,7 +533,7 @@ require("lazy").setup({
 			vim.list_extend(ensure_installed, {
 				"stylua", -- Used to format Lua code
 				"cortex-debug",
-				"buf_lsp",
+				"buf",
 				"clang-format",
 				"debugpy",
 				"pylsp",
