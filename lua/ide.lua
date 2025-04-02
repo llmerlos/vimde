@@ -25,6 +25,7 @@ require("lazy").setup({
 		lazy = false,
 		priority = 1000,
 		config = function()
+			vim.opt.background = "dark"
 			vim.g.gruvbox_material_background = "medium"
 			vim.g.gruvbox_material_foreground = "original"
 			vim.cmd.colorscheme("gruvbox-material")
@@ -368,7 +369,7 @@ require("lazy").setup({
 			vim.keymap.set(
 				"v",
 				"<leader>fa",
-				'"zy<CMD>lua require("telescope.builtin").live_grep({additional_args = {}})<CR><c-r>z',
+				'"zy<CMD>lua require("telescope.builtin").live_grep({additional_args = {}})<CR><c-r>z<ESC>',
 				{ desc = "[f]ind selection in files [a]" }
 			)
 			vim.keymap.set("n", "<leader>fs", function()
@@ -377,7 +378,7 @@ require("lazy").setup({
 			vim.keymap.set(
 				"v",
 				"<leader>fs",
-				'"zy<CMD>lua require("telescope.builtin").live_grep({additional_args = {"--hidden"}})<CR><c-r>z',
+				'"zy<CMD>lua require("telescope.builtin").live_grep({additional_args = {"--hidden"}})<CR><c-r>z<ESC>',
 				{ desc = "[f]ind [s]election in files (--hidden)" }
 			)
 			vim.keymap.set("n", "<leader>fS", function()
@@ -390,7 +391,7 @@ require("lazy").setup({
 			vim.keymap.set(
 				"v",
 				"<leader>fS",
-				'"zy<CMD>lua require("telescope.builtin").live_grep({additional_args = {"--hidden", "--no-ignore"}})<CR><c-r>z',
+				'"zy<CMD>lua require("telescope.builtin").live_grep({additional_args = {"--hidden", "--no-ignore"}})<CR><c-r>z<ESC>',
 				{ desc = "[f]ind [S]election in files (--hidden --no-ignore)" }
 			)
 			vim.keymap.set("n", "<leader>fg", builtin.git_status, { desc = "[f]ind [g]it modified files" })
