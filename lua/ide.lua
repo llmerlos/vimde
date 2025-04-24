@@ -187,6 +187,11 @@ require("lazy").setup({
 					{ "overseer" },
 				},
 			},
+			inactive_sections = {
+				lualine_c = {
+					{ "filename", path = 1 },
+				},
+			},
 			tabline = {
 				lualine_a = {
 					{
