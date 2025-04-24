@@ -58,8 +58,9 @@ vnoremap    <lt>               <lt>gv
 
 "" MISC
 nnoremap    U                  <C-R>
-noremap     <silent><ESC>      :set nohls<CR>
-noremap     <leader>wc         :cd %:h<CR>
+nnoremap    <silent><ESC>      :set nohls<CR>
+noremap     <leader>cd         :cd %:h<CR>
+nnoremap    <expr><leader>qb   &background == 'light' ? ':set bg=dark<cr>' : ':set bg=light<cr>'
 
 "" SCROLL & NAVIGATION
 noremap     <Up>               <Nop>
@@ -72,6 +73,7 @@ noremap     <silent><C-l>      :bn<CR>
 noremap     <silent><C-h>      :bp<CR>
 noremap     X                  :bd<CR>
 noremap  <silent><leader><Tab> :b <Tab>
+nnoremap    <Tab>              <C-^>
 noremap     Q                  @q
 noremap     mq                 mQ
 noremap     mw                 mW

@@ -25,7 +25,7 @@ require("lazy").setup({
 		lazy = false,
 		priority = 1000,
 		config = function()
-			vim.opt.background = "dark"
+			vim.opt.background = "light"
 			vim.g.gruvbox_material_background = "medium"
 			vim.g.gruvbox_material_foreground = "original"
 			vim.cmd.colorscheme("gruvbox-material")
@@ -39,6 +39,13 @@ require("lazy").setup({
 			{ "<Leader>P", "<Plug>(TomePlayParagraph)", mode = { "n" }, desc = "play [P]aragraph" },
 			{ "<Leader>p", "<Plug>(TomePlaySelection)", mode = { "x" }, desc = "[p]lay selection" },
 		},
+	},
+	{
+		"MeanderingProgrammer/render-markdown.nvim",
+		dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" }, -- if you prefer nvim-web-devicons
+		---@module 'render-markdown'
+		---@type render.md.UserConfig
+		opts = {},
 	},
 	{
 		"folke/which-key.nvim",
@@ -404,6 +411,12 @@ require("lazy").setup({
 				"<leader>/",
 				builtin.current_buffer_fuzzy_find,
 				{ desc = "[/] Fuzzily search in current buffer" }
+			)
+			vim.keymap.set(
+				"v",
+				"<leader>/",
+				'"zy<CMD>lua require("telescope.builtin").current_buffer_fuzzy_find()<CR><c-r>z<ESC>',
+				{ desc = "[/] Fuzzily search selection in current buffer" }
 			)
 			vim.keymap.set("n", "<leader>f/", function()
 				builtin.live_grep({
