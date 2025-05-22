@@ -8,6 +8,13 @@ vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.keymap.set("n", "<leader>dq", vim.diagnostic.setloclist, { desc = "Open [D]iagnostic [Q]uickfix list" })
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
+vim.cmd([[
+  augroup filetype_dts
+    autocmd!
+    autocmd BufRead,BufNewFile *.dts,*.dtsi setlocal commentstring=//\ %s
+  augroup END
+]])
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -344,6 +351,13 @@ require("lazy").setup({
 		},
 		config = function()
 			require("telescope").setup({
+				defaults = {
+					mappings = {
+						n = {
+							["X"] = require("telescope.actions").delete_buffer,
+						},
+					},
+				},
 				extensions = {
 					["ui-select"] = {
 						require("telescope.themes").get_dropdown(),
