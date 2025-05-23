@@ -127,5 +127,5 @@ vnoremap    p                  "_dP
 
 
 if g:env.ide == 1
-    lua require('ide')
+    lua require('plugins')
 endif
