@@ -42,9 +42,9 @@ require("lazy").setup({
 		"laktak/tome",
 		opts = {},
 		keys = {
-			{ "<Leader>p", "<Plug>(TomePlayLine)", mode = { "n" }, desc = "[p]lay line" },
-			{ "<Leader>P", "<Plug>(TomePlayParagraph)", mode = { "n" }, desc = "play [P]aragraph" },
-			{ "<Leader>p", "<Plug>(TomePlaySelection)", mode = { "x" }, desc = "[p]lay selection" },
+			{ "<Leader>,", "<Plug>(TomePlayLine)", mode = { "n" }, desc = "[p]lay line" },
+			-- { "<Leader>p", "<Plug>(TomePlayParagraph)", mode = { "n" }, desc = "play [P]aragraph" },
+			{ "<Leader>,", "<Plug>(TomePlaySelection)", mode = { "x" }, desc = "[p]lay selection" },
 		},
 	},
 	{
@@ -696,13 +696,15 @@ require("lazy").setup({
 		},
     -- stylua: ignore
     keys = {
-      { "<leader>dp", function() require("dap").toggle_breakpoint() end, desc = "[d]ebug break[p]oint" },
-      { "<leader>df", function() require("dap").continue() end, desc = "[d]ebug continue [f]" },
-      { "<leader>ds", function() require("dap").terminate() end, desc = "[d]ebug terminate [s]" },
-      { "<leader>dj", function() require("dap").step_into() end, desc = "[d]ebug step into [j]" },
-      { "<leader>dk", function() require("dap").step_out() end, desc = "[d]ebug step out [k]" },
-      { "<leader>dl", function() require("dap").step_over() end, desc = "[d]ebug step over [l]" },
-      { "<leader>dh", function() require("dap").pause() end, desc = "[d]ebug pause [h]" },
+      { "<leader>n", function() require("dap").terminate() end, desc = "[d]ebug terminate [s]" },
+      { "<leader>m", function() require("dap").continue() end, desc = "[d]ebug continue [f]" },
+      { "<leader>i", function() require("dap").down() end, desc = "[d]ebug scope down [i]" },
+      { "<leader>o", function() require("dap").up() end, desc = "[d]ebug scope up [o]" },
+      { "<leader>p", function() require("dap").toggle_breakpoint() end, desc = "[d]ebug break[.]oint" },
+      { "<leader>h", function() require("dap").pause() end, desc = "[d]ebug pause [h]" },
+      { "<leader>j", function() require("dap").step_into() end, desc = "[d]ebug step into [j]" },
+      { "<leader>k", function() require("dap").step_out() end, desc = "[d]ebug step out [k]" },
+      { "<leader>l", function() require("dap").step_over() end, desc = "[d]ebug step over [l]" },
     },
 
 		config = function()
@@ -761,7 +763,7 @@ require("lazy").setup({
 						},
 						{
 							id = "scopes",
-							size = 0.60,
+							size = 0.40,
 						},
 						{
 							id = "breakpoints",
@@ -769,7 +771,7 @@ require("lazy").setup({
 						},
 						{
 							id = "stacks",
-							size = 0.10,
+							size = 0.30,
 						},
 						{
 							id = "watches",
