@@ -33,10 +33,9 @@ if g:env.vsc == 0
     set mouse=a
     set termguicolors
     set number
-    set relativenumber
     set nowrap
     set cursorline
-    set colorcolumn=120
+    set colorcolumn=100
 endif
 
 " REMAPS
@@ -73,7 +72,6 @@ noremap     <silent><C-l>      :bn<CR>
 noremap     <silent><C-h>      :bp<CR>
 noremap     X                  :bd<CR>
 noremap  <silent><leader><Tab> :b <Tab>
-nnoremap    <Tab>              <C-^>
 noremap     Q                  @q
 noremap     mq                 mQ
 noremap     mw                 mW
