@@ -116,41 +116,6 @@ require("lazy").setup({
 		},
 	},
 	{
-		"folke/persistence.nvim",
-		event = "BufReadPre",
-		opts = {},
-		keys = {
-			{
-				"<leader>ws",
-				function()
-					require("persistence").load()
-				end,
-				desc = "Re[s]tore session",
-			},
-			{
-				"<leader>wS",
-				function()
-					require("persistence").select()
-				end,
-				desc = "[S]elect session",
-			},
-			{
-				"<leader>wl",
-				function()
-					require("persistence").load({ last = true })
-				end,
-				desc = "Restore [l]ast session",
-			},
-			{
-				"<leader>wd",
-				function()
-					require("persistence").stop()
-				end,
-				desc = "[d]iscard current session",
-			},
-		},
-	},
-	{
 		"nvim-neo-tree/neo-tree.nvim",
 		branch = "v3.x",
 		dependencies = {
@@ -342,7 +307,7 @@ require("lazy").setup({
 	{ -- Fuzzy Finder (files, lsp, etc)
 		"nvim-telescope/telescope.nvim",
 		event = "VimEnter",
-		branch = "0.1.8",
+		tag = "v0.1.9",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
@@ -470,8 +435,8 @@ require("lazy").setup({
 			-- Useful status updates for LSP.
 			{ "j-hui/fidget.nvim", opts = {} },
 
-			-- Allows extra capabilities provided by nvim-cmp
-			"hrsh7th/cmp-nvim-lsp",
+			-- Allows extra capabilities provided by blink.cmp
+			"saghen/blink.cmp",
 		},
 		config = function()
 			--  This function gets run when an LSP attaches to a particular buffer.
@@ -507,7 +472,7 @@ require("lazy").setup({
 					--
 					-- When you move your cursor, the highlights will be cleared (the second autocommand).
 					local client = vim.lsp.get_client_by_id(event.data.client_id)
-					if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+					if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
 						local highlight_augroup =
 							vim.api.nvim_create_augroup("kickstart-lsp-highlight", { clear = false })
 						vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
@@ -531,7 +496,7 @@ require("lazy").setup({
 						})
 					end
 
-					if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
+					if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
 						map("<leader>cih", function()
 							vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
 						end, "[c]ode [i]nlay [h]ints")
@@ -543,8 +508,14 @@ require("lazy").setup({
 			--  By default, Neovim doesn't support everything that is in the LSP specification.
 			--  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
 			--  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
-			local capabilities = vim.lsp.protocol.make_client_capabilities()
-			capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+			-- local capabilities = vim.lsp.protocol.make_client_capabilities()
+			-- capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+
+			-- LSP servers and clients are able to communicate to each other what features they support.
+			--  By default, Neovim doesn't support everything that is in the LSP specification.
+			--  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
+			--  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
+			local capabilities = require("blink.cmp").get_lsp_capabilities()
 
 			local servers = {
 				clangd = {
@@ -641,48 +612,41 @@ require("lazy").setup({
 		},
 	},
 	{ -- Autocompletion
-		"hrsh7th/nvim-cmp",
-		event = "InsertEnter",
-		dependencies = {
-			"hrsh7th/cmp-nvim-lsp",
-			"hrsh7th/cmp-path",
+		"saghen/blink.cmp",
+		event = "VimEnter",
+		version = "1.x",
+		dependencies = {},
+		opts = {
+			keymap = {
+				-- <tab>/<s-tab>: move to right/left of your snippet expansion
+				-- <c-space>: Open menu or open docs if already open
+				-- <c-n>/<c-p> or <up>/<down>: Select next/previous item
+				-- <c-e>: Hide menu
+				-- <c-k>: Toggle signature help
+				preset = "enter",
+			},
+
+			appearance = {
+				nerd_font_variant = "mono",
+			},
+
+			completion = {
+				-- By default, you may press `<c-space>` to show the documentation.
+				-- Optionally, set `auto_show = true` to show the documentation after a delay.
+				documentation = { auto_show = false, auto_show_delay_ms = 500 },
+			},
+
+			sources = {
+				default = { "lsp", "path", "buffer" },
+			},
+
+			fuzzy = { implementation = "prefer_rust_with_warning" },
+
+			-- Shows a signature help window while you type arguments for a function
+			signature = { enabled = true },
 		},
-		config = function()
-			-- See `:help cmp`
-			local cmp = require("cmp")
-
-			cmp.setup({
-				completion = { completeopt = "menu,menuone,noinsert" },
-
-				-- For an understanding of why these mappings were
-				-- chosen, you will need to read `:help ins-completion`
-				--
-				-- No, but seriously. Please read `:help ins-completion`, it is really good!
-				mapping = cmp.mapping.preset.insert({
-					-- Select the [n]ext / [p]revious item
-					["<C-n>"] = cmp.mapping.select_next_item(),
-					["<C-p>"] = cmp.mapping.select_prev_item(),
-					["<Tab>"] = cmp.mapping.select_next_item(),
-					["<S-Tab>"] = cmp.mapping.select_prev_item(),
-
-					-- Scroll the documentation window [b]ack / [f]orward
-					["<C-b>"] = cmp.mapping.scroll_docs(-4),
-					["<C-f>"] = cmp.mapping.scroll_docs(4),
-
-					["<CR>"] = cmp.mapping.confirm({ select = true }),
-
-					-- Manually trigger a completion from nvim-cmp.
-					--  Generally you don't need this, because nvim-cmp will display
-					--  completions whenever it has completion options available.
-					["<C-Space>"] = cmp.mapping.complete({}),
-				}),
-				sources = {
-					{ name = "nvim_lsp" },
-					{ name = "path" },
-				},
-			})
-		end,
 	},
+
 	--------------------------DAP-------------------
 	{
 		"mfussenegger/nvim-dap",
@@ -696,15 +660,17 @@ require("lazy").setup({
 		},
     -- stylua: ignore
     keys = {
-      { "<leader>n", function() require("dap").terminate() end, desc = "[d]ebug terminate [s]" },
-      { "<leader>m", function() require("dap").continue() end, desc = "[d]ebug continue [f]" },
-      { "<leader>i", function() require("dap").down() end, desc = "[d]ebug scope down [i]" },
-      { "<leader>o", function() require("dap").up() end, desc = "[d]ebug scope up [o]" },
-      { "<leader>p", function() require("dap").toggle_breakpoint() end, desc = "[d]ebug break[.]oint" },
-      { "<leader>h", function() require("dap").pause() end, desc = "[d]ebug pause [h]" },
-      { "<leader>j", function() require("dap").step_into() end, desc = "[d]ebug step into [j]" },
-      { "<leader>k", function() require("dap").step_out() end, desc = "[d]ebug step out [k]" },
-      { "<leader>l", function() require("dap").step_over() end, desc = "[d]ebug step over [l]" },
+      { "<leader>n", function() require("dap").terminate() end, desc = "debug terminate" },
+      { "<leader>m", function() require("dap").continue() end, desc = "debug continue" },
+      { "<leader>i", function() require("dap").down() end, desc = "debug scope down" },
+      { "<leader>o", function() require("dap").up() end, desc = "debug scope up" },
+      { "<leader>p", function() require("dap").toggle_breakpoint() end, desc = "debug breakpoint" },
+      { "<leader>h", function() require("dap").pause() end, desc = "debug pause" },
+      { "<leader>j", function() require("dap").step_into() end, desc = "debug step into" },
+      { "<leader>k", function() require("dap").step_out() end, desc = "debug step out" },
+      { "<leader>l", function() require("dap").step_over() end, desc = "debug step over" },
+      { "<leader>u", function() require("dap").repl.open() end, desc = "debug repl open" },
+      { "<leader>U", function() require("dap").repl.close() end, desc = "debug repl close" },
     },
 
 		config = function()
@@ -812,6 +778,32 @@ require("lazy").setup({
 			{ "<leader>b", "<CMD>OverseerRun Build<CR>", desc = "[b]uild" },
 			{ "<leader>tl", "<CMD>OverseerOpen<CR><CMD>OverseerRun<CR>", desc = "[t]ask [l]aunch" },
 			{ "<leader>tu", "<CMD>OverseerToggle<CR>", desc = "[t]ask [u]i" },
+		},
+	},
+
+	-- AI --
+	{
+		"coder/claudecode.nvim",
+		dependencies = { "folke/snacks.nvim" },
+		config = true,
+		keys = {
+			{ "<leader>a", nil, desc = "AI/Claude Code" },
+			{ "<leader>ac", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
+			{ "<leader>af", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
+			{ "<leader>ar", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
+			{ "<leader>aC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
+			{ "<leader>am", "<cmd>ClaudeCodeSelectModel<cr>", desc = "Select Claude model" },
+			{ "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
+			{ "<leader>as", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
+			{
+				"<leader>as",
+				"<cmd>ClaudeCodeTreeAdd<cr>",
+				desc = "Add file",
+				ft = { "NvimTree", "neo-tree", "oil", "minifiles", "netrw" },
+			},
+			-- Diff management
+			{ "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
+			{ "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
 		},
 	},
 })
