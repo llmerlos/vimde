@@ -6,6 +6,11 @@ vim.opt.timeoutlen = 300
 vim.opt.list = true
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.keymap.set("n", "<leader>dq", vim.diagnostic.setloclist, { desc = "Open [D]iagnostic [Q]uickfix list" })
+vim.keymap.set("n", "<leader>vp", function()
+	vim.pack.update(nil, { offline = true })
+end, { desc = "[v]im plugin list" })
+vim.keymap.set("n", "<leader>vr", "<CMD>restart<CR>", { desc = "[v]im restart" })
+vim.keymap.set("n", "<leader>ve", "<CMD>e $MYVIMRC<CR><CMD>cd %:h<CR>", { desc = "[v]im edit" })
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
 -- Define custom `vim.pack.add()` hook helper. See `:h vim.pack-events`.
@@ -179,7 +184,6 @@ on_packchanged("nvim-treesitter", { "update" }, ts_update, ":TSUpdate")
 
 vim.pack.add({
 	"https://github.com/nvim-treesitter/nvim-treesitter",
-	"https://github.com/nvim-treesitter/nvim-treesitter-textobjects",
 })
 
 local languages = {
@@ -265,7 +269,7 @@ vim.pack.add({
 })
 
 require("blink.cmp").setup({
-	keymap = { preset = "enter" },
+	keymap = { preset = "cmdline" },
 	appearance = { nerd_font_variant = "mono" },
 	completion = { documentation = { auto_show = false } },
 	sources = { default = { "lsp", "path", "buffer" } },
@@ -362,12 +366,11 @@ require("dapui").setup({
 	layouts = {
 		{
 			elements = {
-				{ id = "repl", size = 0.10 },
-				{ id = "scopes", size = 0.40 },
+				{ id = "console", size = 0.10 },
 				{ id = "breakpoints", size = 0.10 },
+				{ id = "scopes", size = 0.40 },
 				{ id = "stacks", size = 0.30 },
 				{ id = "watches", size = 0.10 },
-				-- { id = "console", size = 0.10, },
 			},
 			position = "right",
 			size = 40,
