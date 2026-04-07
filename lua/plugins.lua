@@ -108,9 +108,9 @@ require("gitsigns").setup({
 -- UI =========================================================================
 
 vim.pack.add({
-	"https://github.com/nvim-lua/plenary.nvim",    -- dep
+	"https://github.com/nvim-lua/plenary.nvim", -- dep
 	"https://github.com/nvim-tree/nvim-web-devicons", -- dep
-	"https://github.com/MunifTanjim/nui.nvim",     -- dep
+	"https://github.com/MunifTanjim/nui.nvim", -- dep
 	"https://github.com/nvim-mini/mini.bufremove",
 	"https://github.com/nvim-neo-tree/neo-tree.nvim",
 	"https://github.com/nvim-lualine/lualine.nvim",
@@ -156,14 +156,14 @@ require("which-key").setup({
 	delay = 500,
 	spec = {
 		{ "<leader><leader>", group = "compat" },
-		{ "<leader>c",        group = "[c]ode" },
-		{ "<leader>d",        group = "[d]ebug" },
-		{ "<leader>f",        group = "[f]ind" },
-		{ "<leader>g",        group = "[g]it",      mode = { "n", "v" } },
-		{ "<leader>q",        group = "[q]ustom" },
-		{ "<leader>t",        group = "[t]asks" },
-		{ "<leader>v",        group = "[v]imrc" },
-		{ "<leader>w",        group = "[w]orkspace" },
+		{ "<leader>c", group = "[c]ode" },
+		{ "<leader>d", group = "[d]ebug" },
+		{ "<leader>f", group = "[f]ind" },
+		{ "<leader>g", group = "[g]it", mode = { "n", "v" } },
+		{ "<leader>q", group = "[q]ustom" },
+		{ "<leader>t", group = "[t]asks" },
+		{ "<leader>v", group = "[v]imrc" },
+		{ "<leader>w", group = "[w]orkspace" },
 	},
 })
 
@@ -206,90 +206,54 @@ vim.api.nvim_create_autocmd("FileType", {
 	desc = "Start tree-sitter",
 })
 
--- Telescope ==================================================================
+-- Fuzzy Finder ===============================================================
 
 vim.pack.add({
-	"https://github.com/nvim-lua/plenary.nvim",
-	"https://github.com/nvim-tree/nvim-web-devicons",
-	"https://github.com/nvim-telescope/telescope-ui-select.nvim",
-	"https://github.com/nvim-telescope/telescope-fzf-native.nvim", -- has to build manually
-	{ src = "https://github.com/nvim-telescope/telescope.nvim", version = "v0.2.2" },
+	"https://github.com/ibhagwan/fzf-lua",
 })
 
-require("telescope").setup({
-	defaults = { mappings = { n = { ["X"] = require("telescope.actions").delete_buffer } } },
-	extensions = {
-		["ui-select"] = {
-			require("telescope.themes").get_dropdown(),
-		},
-	},
-})
-require("telescope").load_extension("fzf")
-require("telescope").load_extension("ui-select")
+local fzf = require("fzf-lua")
+fzf.setup({ "default-title" })
+fzf.register_ui_select()
 
-local tsbuiltin = require("telescope.builtin")
-vim.keymap.set("n", "<leader>fh", tsbuiltin.help_tags, { desc = "[f]ind [h]elp" })
-vim.keymap.set("n", "<leader>fk", tsbuiltin.keymaps, { desc = "[f]ind [k]eymaps" })
-vim.keymap.set("n", "<leader>fp", tsbuiltin.builtin, { desc = "[f]ind telescope [p]icker" })
-vim.keymap.set("n", "<leader>fd", "<CMD>Telescope find_files find_command=fd<CR>", { desc = "[f]in[d] files" })
-vim.keymap.set(
-	"n",
-	"<leader>ff",
-	"<CMD>Telescope find_files find_command=fd,--hidden<CR>",
-	{ desc = "[f]ind including (hidden) [f]iles" }
-)
-vim.keymap.set(
-	"n",
-	"<leader>fF",
-	"<CMD>Telescope find_files find_command=fd,--hidden,--no-ignore<CR>",
-	{ desc = "[f]ind including (ignored hidden) [F]iles" }
-)
-vim.keymap.set("n", "<leader>fa", function()
-	tsbuiltin.live_grep({ additional_args = {} })
-end, { desc = "[f]ind string in files [a]" })
-vim.keymap.set(
-	"v",
-	"<leader>fa",
-	'"zy<CMD>lua require("telescope.builtin").live_grep({additional_args = {}})<CR><c-r>z<ESC>',
-	{ desc = "[f]ind selection in files [a]" }
-)
+local RG_OPTS = "--column --line-number --no-heading --color=always --smart-case --max-columns=4096"
+
+vim.keymap.set("n", "<leader>fh", fzf.helptags, { desc = "[f]ind [h]elp" })
+vim.keymap.set("n", "<leader>fk", fzf.keymaps, { desc = "[f]ind [k]eymaps" })
+vim.keymap.set("n", "<leader>fp", fzf.builtin, { desc = "[f]ind fzf [p]icker" })
+vim.keymap.set("n", "<leader>fd", function()
+	fzf.files({ cmd = "fd --type f" })
+end, { desc = "[f]in[d] files" })
+vim.keymap.set("n", "<leader>ff", function()
+	fzf.files({ cmd = "fd --type f --hidden" })
+end, { desc = "[f]ind including (hidden) [f]iles" })
+vim.keymap.set("n", "<leader>fF", function()
+	fzf.files({ cmd = "fd --type f --hidden --no-ignore" })
+end, { desc = "[f]ind including (ignored hidden) [F]iles" })
+vim.keymap.set("n", "<leader>fa", fzf.live_grep, { desc = "[f]ind string in files [a]" })
+vim.keymap.set("v", "<leader>fa", fzf.grep_visual, { desc = "[f]ind selection in files [a]" })
 vim.keymap.set("n", "<leader>fs", function()
-	tsbuiltin.live_grep({ additional_args = { "--hidden" } })
+	fzf.live_grep({ rg_opts = RG_OPTS .. " --hidden" })
 end, { desc = "[f]ind [s]tring in files (--hidden)" })
-vim.keymap.set(
-	"v",
-	"<leader>fs",
-	'"zy<CMD>lua require("telescope.builtin").live_grep({additional_args = {"--hidden"}})<CR><c-r>z<ESC>',
-	{ desc = "[f]ind [s]election in files (--hidden)" }
-)
+vim.keymap.set("v", "<leader>fs", function()
+	fzf.grep_visual({ rg_opts = RG_OPTS .. " --hidden" })
+end, { desc = "[f]ind [s]election in files (--hidden)" })
 vim.keymap.set("n", "<leader>fS", function()
-	tsbuiltin.live_grep({
-		additional_args = function()
-			return { "--hidden", "--no-ignore" }
-		end,
-	})
+	fzf.live_grep({ rg_opts = RG_OPTS .. " --hidden --no-ignore" })
 end, { desc = "[f]ind [S]tring in files (--hidden --no-ignore)" })
-vim.keymap.set(
-	"v",
-	"<leader>fS",
-	'"zy<CMD>lua require("telescope.builtin").live_grep({additional_args = {"--hidden", "--no-ignore"}})<CR><c-r>z<ESC>',
-	{ desc = "[f]ind [S]election in files (--hidden --no-ignore)" }
-)
-vim.keymap.set("n", "<leader>fg", tsbuiltin.git_status, { desc = "[f]ind [g]it modified files" })
-vim.keymap.set("n", "<leader>fG", tsbuiltin.diagnostics, { desc = "[f]ind dia[G]nostics" })
-vim.keymap.set("n", "<leader>fr", tsbuiltin.resume, { desc = "[f]ind [r]esume" })
-vim.keymap.set("n", "<leader>f.", tsbuiltin.oldfiles, { desc = '[f]ind Recent Files ("." for repeat)' })
-vim.keymap.set("n", "<leader>fo", tsbuiltin.buffers, { desc = "[f]ind [o]pen buffers" })
-vim.keymap.set("n", "<leader>/", tsbuiltin.current_buffer_fuzzy_find, { desc = "[/] Fuzzily search in current buffer" })
-vim.keymap.set(
-	"v",
-	"<leader>/",
-	'"zy<CMD>lua require("telescope.builtin").current_buffer_fuzzy_find()<CR><c-r>z<ESC>',
-	{ desc = "[/] Fuzzily search selection in current buffer" }
-)
-vim.keymap.set("n", "<leader>f/", function()
-	tsbuiltin.live_grep({ grep_open_files = true, prompt_title = "Live Grep in Open Files" })
-end, { desc = "[f]ind [/] in Open Files" })
+vim.keymap.set("v", "<leader>fS", function()
+	fzf.grep_visual({ rg_opts = RG_OPTS .. " --hidden --no-ignore" })
+end, { desc = "[f]ind [S]election in files (--hidden --no-ignore)" })
+vim.keymap.set("n", "<leader>fg", fzf.git_status, { desc = "[f]ind [g]it modified files" })
+vim.keymap.set("n", "<leader>fG", fzf.diagnostics_workspace, { desc = "[f]ind dia[G]nostics" })
+vim.keymap.set("n", "<leader>fr", fzf.resume, { desc = "[f]ind [r]esume" })
+vim.keymap.set("n", "<leader>f.", fzf.oldfiles, { desc = '[f]ind Recent Files ("." for repeat)' })
+vim.keymap.set("n", "<leader>fo", fzf.buffers, { desc = "[f]ind [o]pen buffers" })
+vim.keymap.set("n", "<leader>/", fzf.lgrep_curbuf, { desc = "[/] Fuzzily search in current buffer" })
+vim.keymap.set("v", "<leader>/", function()
+	fzf.lgrep_curbuf({ search = fzf.utils.get_visual_selection() })
+end, { desc = "[/] Fuzzily search selection in current buffer" })
+vim.keymap.set("n", "<leader>f/", fzf.lines, { desc = "[f]ind [/] in Open Files" })
 
 -- Language servers ===========================================================
 vim.pack.add({
@@ -352,10 +316,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 		--  To jump back, press <C-t>.
 		map("gD", vim.lsp.buf.declaration, "[g]oto [D]eclaration")
-		map("gd", require("telescope.builtin").lsp_definitions, "[g]oto [d]efinition")
-		map("gr", require("telescope.builtin").lsp_references, "[g]oto [r]eferences")
-		map("gI", require("telescope.builtin").lsp_implementations, "[g]oto [I]mplementation")
-		map("<leader>co", require("telescope.builtin").lsp_document_symbols, "[c]ode [o]utline")
+		map("gd", fzf.lsp_definitions, "[g]oto [d]efinition")
+		map("gr", fzf.lsp_references, "[g]oto [r]eferences")
+		map("gI", fzf.lsp_implementations, "[g]oto [I]mplementation")
+		map("<leader>co", fzf.lsp_document_symbols, "[c]ode [o]utline")
 		map("<leader>cr", vim.lsp.buf.rename, "[c]ode [r]e[n]ame")
 		map("<leader>ca", vim.lsp.buf.code_action, "[c]ode [a]ction", { "n", "x" })
 
@@ -398,11 +362,11 @@ require("dapui").setup({
 	layouts = {
 		{
 			elements = {
-				{ id = "repl",        size = 0.10 },
-				{ id = "scopes",      size = 0.40 },
+				{ id = "repl", size = 0.10 },
+				{ id = "scopes", size = 0.40 },
 				{ id = "breakpoints", size = 0.10 },
-				{ id = "stacks",      size = 0.30 },
-				{ id = "watches",     size = 0.10 },
+				{ id = "stacks", size = 0.30 },
+				{ id = "watches", size = 0.10 },
 				-- { id = "console", size = 0.10, },
 			},
 			position = "right",
