@@ -1,4 +1,5 @@
 vim.g.have_nerd_font = true
+vim.o.exrc = true
 vim.opt.showmode = false
 vim.opt.signcolumn = "yes"
 vim.opt.updatetime = 250
@@ -338,6 +339,30 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 require("mason").setup()
 require("mason-lspconfig").setup()
+
+-- -- Debug ======================================================================
+-- vim.cmd("packadd! termdebug")
+-- vim.g.termdebug_config = {
+-- 	wide = 1,
+-- }
+-- vim.keymap.set("n", "<leader>ds", "<cmd>Termdebug<cr>", { desc = "debug start" })
+-- vim.keymap.set("n", "<leader>n", function()
+-- 	vim.cmd("call TermDebugSendCommand('quit')")
+-- 	vim.defer_fn(function()
+-- 		vim.cmd("call TermDebugSendCommand('y')")
+-- 	end, 100)
+-- end, { desc = "debug shutdown" })
+-- vim.keymap.set("n", "<leader>m", "<cmd>Continue<cr>", { desc = "debug continue" })
+-- vim.keymap.set("n", "<leader>i", "<cmd>Down<cr>", { desc = "debug scope down" })
+-- vim.keymap.set("n", "<leader>o", "<cmd>Up<cr>", { desc = "debug scope up" })
+-- vim.keymap.set("n", "<leader>p", "<cmd>Break<cr>", { desc = "debug breakpoint" })
+-- vim.keymap.set("n", "<leader>P", "<cmd>Clear<cr>", { desc = "debug breakpoint" })
+-- vim.keymap.set("n", "<leader>h", "<cmd>Stop<cr>", { desc = "debug stop" })
+-- vim.keymap.set("n", "<leader>j", "<cmd>Step<cr>", { desc = "debug step into" })
+-- vim.keymap.set("n", "<leader>k", "<cmd>Finish<cr>", { desc = "debug step out" })
+-- vim.keymap.set("n", "<leader>l", "<cmd>Over<cr>", { desc = "debug step over" })
+-- vim.keymap.set("n", "<leader>u", "<cmd>Gdb<cr>", { desc = "debug gdb prompt" })
+-- vim.keymap.set({ "n", "v" }, "<leader>de", "<cmd>Evaluate<cr>", { desc = "debug evaluate" })
 
 -- DAP ========================================================================
 vim.pack.add({
