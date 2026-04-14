@@ -375,11 +375,9 @@ require("mason-lspconfig").setup()
 -- DAP ========================================================================
 vim.pack.add({
 	"https://github.com/mfussenegger/nvim-dap",
-	"https://github.com/nvim-neotest/nvim-nio",
-	"https://github.com/rcarriga/nvim-dap-ui",
-	"https://github.com/theHamsta/nvim-dap-virtual-text",
 	"https://github.com/jay-babu/mason-nvim-dap.nvim",
 	"https://github.com/jedrzejboczar/nvim-dap-cortex-debug",
+	{ src = "https://github.com/igorlfs/nvim-dap-view", version = vim.version.range("1.x") },
 })
 
 require("mason-nvim-dap").setup()
@@ -392,37 +390,20 @@ vscode.json_decode = function(str)
 	return vim.json.decode(json.json_strip_comments(str))
 end
 
-require("nvim-dap-virtual-text").setup()
-require("dap-cortex-debug").setup()
-
-require("dapui").setup({
-	layouts = {
-		{
-			elements = {
-				{ id = "console", size = 0.10 },
-				{ id = "breakpoints", size = 0.10 },
-				{ id = "scopes", size = 0.40 },
-				{ id = "stacks", size = 0.30 },
-				{ id = "watches", size = 0.10 },
-			},
-			position = "right",
-			size = 40,
-		},
-	},
+require("dap-cortex-debug").setup({
+	dapui_rtt = false,
 })
 
-require("dap").listeners.before.attach.dapui_config = function()
-	require("dapui").open()
-end
-require("dap").listeners.before.launch.dapui_config = function()
-	require("dapui").open()
-end
-require("dap").listeners.before.event_terminated.dapui_config = function()
-	require("dapui").close()
-end
-require("dap").listeners.before.event_exited.dapui_config = function()
-	require("dapui").close()
-end
+require("dap-view").setup({
+	windows = {
+		size = 0.33,
+		position = "left",
+	},
+	virtual_text = {
+		enabled = true,
+	},
+	auto_toggle = true,
+})
 
 -- stylua: ignore start
 vim.keymap.set("n", "<leader>n", function() require("dap").terminate() end, { desc = "debug terminate" })
@@ -436,6 +417,7 @@ vim.keymap.set("n", "<leader>k", function() require("dap").step_out() end, { des
 vim.keymap.set("n", "<leader>l", function() require("dap").step_over() end, { desc = "debug step over" })
 vim.keymap.set("n", "<leader>u", function() require("dap").repl.open() end, { desc = "debug repl open" })
 vim.keymap.set("n", "<leader>U", function() require("dap").repl.close() end, { desc = "debug repl close" })
-vim.keymap.set("n", "<leader>du", function() require("dapui").toggle({}) end, { desc = "[d]ebug [u]I" })
-vim.keymap.set({ "n", "v" }, "<leader>de", function() require("dapui").eval() end, { desc = "[d]ebug [e]val" })
+vim.keymap.set("n", "<leader>du", function() require("dap-view").toggle() end, { desc = "[d]ebug [u]I" })
+vim.keymap.set({ "n", "v" }, "<leader>de", function() require("dap.ui.widgets").hover() end, { desc = "[d]ebug [e]val" })
+vim.keymap.set({ "n", "v" }, "<leader>dw", "<cmd>DapViewWatch<cr>", { desc = "[d]ebug [w]atch expr" })
 -- stylua: ignore end
