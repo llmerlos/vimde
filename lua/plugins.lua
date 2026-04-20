@@ -1,12 +1,9 @@
-vim.g.have_nerd_font = true
-vim.o.exrc = true
 vim.opt.showmode = false
 vim.opt.signcolumn = "yes"
 vim.opt.updatetime = 250
 vim.opt.timeoutlen = 300
 vim.opt.list = true
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
-vim.keymap.set("n", "<leader>dq", vim.diagnostic.setloclist, { desc = "Open [D]iagnostic [Q]uickfix list" })
 vim.keymap.set("n", "<leader>vp", function()
 	vim.pack.update(nil, { offline = true })
 end, { desc = "[v]im plugin list" })
@@ -14,41 +11,22 @@ vim.keymap.set("n", "<leader>vr", "<CMD>restart<CR>", { desc = "[v]im restart" }
 vim.keymap.set("n", "<leader>ve", "<CMD>e $MYVIMRC<CR><CMD>cd %:h<CR>", { desc = "[v]im edit" })
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
--- Define custom `vim.pack.add()` hook helper. See `:h vim.pack-events`.
-local gr = vim.api.nvim_create_augroup("custom-config", {})
-local on_packchanged = function(plugin_name, kinds, callback, desc)
-	local f = function(ev)
-		local name, kind = ev.data.spec.name, ev.data.kind
-		if not (name == plugin_name and vim.tbl_contains(kinds, kind)) then
-			return
-		end
-		if not ev.data.active then
-			vim.cmd.packadd(plugin_name)
-		end
-		callback()
-	end
-	vim.api.nvim_create_autocmd("PackChanged", { group = gr, pattern = "*", callback = f, desc = desc })
-end
-
--- Small ======================================================================
-vim.pack.add({
-	"https://github.com/tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
-})
-
 -- Theme ======================================================================
 vim.pack.add({
-	"https://github.com/sainnhe/gruvbox-material",
-	"https://github.com/sainnhe/everforest",
+	"https://github.com/sainnhe/gruvbox-material", -- Theme
 })
 
 vim.opt.background = "light"
 vim.g.gruvbox_material_background = "medium"
 vim.g.gruvbox_material_foreground = "original"
 vim.cmd.colorscheme("gruvbox-material")
--- vim.cmd.colorscheme("everforest")
+
+-- Editor =====================================================================
+vim.pack.add({
+	"https://github.com/tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
+})
 
 -- Git ========================================================================
-
 vim.pack.add({
 	"https://github.com/lewis6991/gitsigns.nvim",
 })
@@ -111,31 +89,33 @@ require("gitsigns").setup({
 	end,
 })
 
--- UI =========================================================================
-
+-- UI/UX ======================================================================
 vim.pack.add({
-	"https://github.com/nvim-lua/plenary.nvim", -- dep
-	"https://github.com/nvim-tree/nvim-web-devicons", -- dep
-	"https://github.com/MunifTanjim/nui.nvim", -- dep
-	"https://github.com/nvim-mini/mini.bufremove",
-	"https://github.com/nvim-neo-tree/neo-tree.nvim",
-	"https://github.com/nvim-lualine/lualine.nvim",
-	"https://github.com/folke/which-key.nvim",
+	"https://github.com/nvim-tree/nvim-web-devicons", -- DEPENDENCY (Icons)
+	"https://github.com/nvim-mini/mini.bufremove", -- Keep layout when bd
+	"https://github.com/nvim-tree/nvim-tree.lua", -- File tree
+	"https://github.com/nvim-lualine/lualine.nvim", -- Buffer line mostly
+	"https://github.com/folke/which-key.nvim", -- Helper for remembering keymaps
 })
 
-require("neo-tree").setup({
-	filesystem = {
-		follow_current_file = { enabled = true },
-		filtered_items = {
-			visible = true, -- when true, they will just be displayed differently than normal items
-			hide_dotfiles = false,
-			hide_gitignored = false,
-			hide_hidden = false,
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+require("nvim-tree").setup({
+	sync_root_with_cwd = true,
+	update_focused_file = { enable = true },
+	filters = {
+		dotfiles = false,
+		git_ignored = false,
+	},
+	git = { enable = true },
+	renderer = {
+		icons = {
+			git_placement = "right_align",
 		},
 	},
 })
-vim.keymap.set("n", "<leader>e", "<cmd>Neotree reveal<CR>", { desc = "Open [e]xplorer" })
-vim.keymap.set("n", "<leader>E", "<cmd>Neotree close<CR>", { desc = "Close [E]xplorer" })
+vim.keymap.set("n", "<leader>e", "<cmd>NvimTreeFindFile<CR>", { desc = "Open [e]xplorer" })
+vim.keymap.set("n", "<leader>E", "<cmd>NvimTreeClose<CR>", { desc = "Close [E]xplorer" })
 
 require("mini.bufremove").setup()
 vim.keymap.set("n", "X", "<cmd>lua MiniBufremove.delete()<CR>", { desc = "Delete buffer [X]" })
@@ -163,13 +143,11 @@ require("which-key").setup({
 	spec = {
 		{ "<leader><leader>", group = "compat" },
 		{ "<leader>c", group = "[c]ode" },
-		{ "<leader>d", group = "[d]ebug" },
 		{ "<leader>f", group = "[f]ind" },
-		{ "<leader>g", group = "[g]it", mode = { "n", "v" } },
+		{ "<leader>g", group = "[g]it" },
 		{ "<leader>q", group = "[q]ustom" },
 		{ "<leader>t", group = "[t]asks" },
 		{ "<leader>v", group = "[v]imrc" },
-		{ "<leader>w", group = "[w]orkspace" },
 	},
 })
 
@@ -178,10 +156,20 @@ vim.keymap.set("n", "<leader>?", function()
 end, { desc = "Buffer Local Keymaps (which-key)" })
 
 -- Tree-sitter ================================================================
-local ts_update = function()
-	vim.cmd("TSUpdate")
-end
-on_packchanged("nvim-treesitter", { "update" }, ts_update, ":TSUpdate")
+vim.api.nvim_create_autocmd("PackChanged", {
+	group = vim.api.nvim_create_augroup("ts-augroup", { clear = true }),
+	pattern = "*",
+	desc = ":TSUpdate",
+	callback = function(ev)
+		if ev.data.spec.name ~= "nvim-treesitter" or ev.data.kind ~= "update" then
+			return
+		end
+		if not ev.data.active then
+			vim.cmd.packadd("nvim-treesitter")
+		end
+		vim.cmd("TSUpdate")
+	end,
+})
 
 vim.pack.add({
 	"https://github.com/nvim-treesitter/nvim-treesitter",
@@ -193,7 +181,9 @@ local languages = {
 	"markdown",
 	"c",
 }
+-- Its a no-op if the language is already installed
 require("nvim-treesitter").install(languages)
+
 -- Enable tree-sitter after opening a file for a target language
 local filetypes = {}
 for _, lang in ipairs(languages) do
@@ -212,9 +202,8 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 -- Fuzzy Finder ===============================================================
-
 vim.pack.add({
-	"https://github.com/ibhagwan/fzf-lua",
+	"https://github.com/ibhagwan/fzf-lua", -- Fuzzy finder
 })
 
 local fzf = require("fzf-lua")
@@ -260,13 +249,13 @@ vim.keymap.set("v", "<leader>/", function()
 end, { desc = "[/] Fuzzily search selection in current buffer" })
 vim.keymap.set("n", "<leader>f/", fzf.lines, { desc = "[f]ind [/] in Open Files" })
 
--- Language servers ===========================================================
+-- Language (LSP) =============================================================
 vim.pack.add({
-	{ src = "https://github.com/saghen/blink.cmp", version = vim.version.range("1.x") },
-	"https://github.com/stevearc/conform.nvim",
-	"https://github.com/neovim/nvim-lspconfig",
-	"https://github.com/mason-org/mason.nvim",
-	"https://github.com/mason-org/mason-lspconfig.nvim",
+	{ src = "https://github.com/saghen/blink.cmp", version = vim.version.range("1.x") }, -- Autocompletion
+	"https://github.com/stevearc/conform.nvim", -- Autoformat
+	"https://github.com/neovim/nvim-lspconfig", -- LSP config database
+	"https://github.com/mason-org/mason.nvim", -- Tool installer
+	"https://github.com/mason-org/mason-lspconfig.nvim", -- glues mason and lspconfig
 })
 
 require("blink.cmp").setup({
@@ -290,28 +279,21 @@ require("conform").setup({
 	default_format_opts = {
 		lsp_format = "fallback",
 	},
-	notify_on_error = false,
-	format_on_save = function(bufnr)
+	formatters_by_ft = { lua = { "stylua" } },
+})
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+	group = vim.api.nvim_create_augroup("format-on-save", { clear = true }),
+	callback = function(args)
 		if vim.g.disable_autoformat then
 			return
 		end
-		local disable_filetypes = {} --{ c = true, cpp = true }
-		local lsp_format_opt
-		if disable_filetypes[vim.bo[bufnr].filetype] then
-			lsp_format_opt = "never"
-		else
-			lsp_format_opt = "fallback"
-		end
-		return {
-			timeout_ms = 500,
-			lsp_format = lsp_format_opt,
-		}
+		require("conform").format({ bufnr = args.buf, timeout_ms = 500, quiet = true })
 	end,
-	-- formatters_by_ft = { lua = { 'stylua' } },
 })
 
 vim.keymap.set("n", "<leader>cf", function()
-	require("conform").format({ async = true, lsp_format = "fallback" })
+	require("conform").format({ async = true })
 end, { desc = "[c]ode [f]ormat buffer" })
 
 vim.keymap.set("n", "<leader>cF", function()
@@ -327,7 +309,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
 		end
 
-		--  To jump back, press <C-t>.
 		map("gD", vim.lsp.buf.declaration, "[g]oto [D]eclaration")
 		map("gd", fzf.lsp_definitions, "[g]oto [d]efinition")
 		map("gr", fzf.lsp_references, "[g]oto [r]eferences")
@@ -338,86 +319,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 		local client = vim.lsp.get_client_by_id(event.data.client_id)
 		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
-			map("<leader>cih", function()
+			map("<leader>ch", function()
 				vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
-			end, "[c]ode [i]nlay [h]ints")
+			end, "[c]ode inlay [h]ints")
 		end
 	end,
 })
 
 require("mason").setup()
 require("mason-lspconfig").setup()
-
--- -- Debug ======================================================================
--- vim.cmd("packadd! termdebug")
--- vim.g.termdebug_config = {
--- 	wide = 1,
--- }
--- vim.keymap.set("n", "<leader>ds", "<cmd>Termdebug<cr>", { desc = "debug start" })
--- vim.keymap.set("n", "<leader>n", function()
--- 	vim.cmd("call TermDebugSendCommand('quit')")
--- 	vim.defer_fn(function()
--- 		vim.cmd("call TermDebugSendCommand('y')")
--- 	end, 100)
--- end, { desc = "debug shutdown" })
--- vim.keymap.set("n", "<leader>m", "<cmd>Continue<cr>", { desc = "debug continue" })
--- vim.keymap.set("n", "<leader>i", "<cmd>Down<cr>", { desc = "debug scope down" })
--- vim.keymap.set("n", "<leader>o", "<cmd>Up<cr>", { desc = "debug scope up" })
--- vim.keymap.set("n", "<leader>p", "<cmd>Break<cr>", { desc = "debug breakpoint" })
--- vim.keymap.set("n", "<leader>P", "<cmd>Clear<cr>", { desc = "debug breakpoint" })
--- vim.keymap.set("n", "<leader>h", "<cmd>Stop<cr>", { desc = "debug stop" })
--- vim.keymap.set("n", "<leader>j", "<cmd>Step<cr>", { desc = "debug step into" })
--- vim.keymap.set("n", "<leader>k", "<cmd>Finish<cr>", { desc = "debug step out" })
--- vim.keymap.set("n", "<leader>l", "<cmd>Over<cr>", { desc = "debug step over" })
--- vim.keymap.set("n", "<leader>u", "<cmd>Gdb<cr>", { desc = "debug gdb prompt" })
--- vim.keymap.set({ "n", "v" }, "<leader>de", "<cmd>Evaluate<cr>", { desc = "debug evaluate" })
-
--- DAP ========================================================================
-vim.pack.add({
-	"https://github.com/mfussenegger/nvim-dap",
-	"https://github.com/jay-babu/mason-nvim-dap.nvim",
-	"https://github.com/jedrzejboczar/nvim-dap-cortex-debug",
-	{ src = "https://github.com/igorlfs/nvim-dap-view", version = vim.version.range("1.x") },
-})
-
-require("mason-nvim-dap").setup()
-vim.api.nvim_set_hl(0, "DapStoppedLine", { default = true, link = "Visual" })
-
--- setup dap config by VsCode launch.json file
-local vscode = require("dap.ext.vscode")
-local json = require("plenary.json")
-vscode.json_decode = function(str)
-	return vim.json.decode(json.json_strip_comments(str))
-end
-
-require("dap-cortex-debug").setup({
-	dapui_rtt = false,
-})
-
-require("dap-view").setup({
-	windows = {
-		size = 0.33,
-		position = "left",
-	},
-	virtual_text = {
-		enabled = true,
-	},
-	auto_toggle = true,
-})
-
--- stylua: ignore start
-vim.keymap.set("n", "<leader>n", function() require("dap").terminate() end, { desc = "debug terminate" })
-vim.keymap.set("n", "<leader>m", function() require("dap").continue() end, { desc = "debug continue" })
-vim.keymap.set("n", "<leader>i", function() require("dap").down() end, { desc = "debug scope down" })
-vim.keymap.set("n", "<leader>o", function() require("dap").up() end, { desc = "debug scope up" })
-vim.keymap.set("n", "<leader>p", function() require("dap").toggle_breakpoint() end, { desc = "debug breakpoint" })
-vim.keymap.set("n", "<leader>h", function() require("dap").pause() end, { desc = "debug pause" })
-vim.keymap.set("n", "<leader>j", function() require("dap").step_into() end, { desc = "debug step into" })
-vim.keymap.set("n", "<leader>k", function() require("dap").step_out() end, { desc = "debug step out" })
-vim.keymap.set("n", "<leader>l", function() require("dap").step_over() end, { desc = "debug step over" })
-vim.keymap.set("n", "<leader>u", function() require("dap").repl.open() end, { desc = "debug repl open" })
-vim.keymap.set("n", "<leader>U", function() require("dap").repl.close() end, { desc = "debug repl close" })
-vim.keymap.set("n", "<leader>du", function() require("dap-view").toggle() end, { desc = "[d]ebug [u]I" })
-vim.keymap.set({ "n", "v" }, "<leader>de", function() require("dap.ui.widgets").hover() end, { desc = "[d]ebug [e]val" })
-vim.keymap.set({ "n", "v" }, "<leader>dw", "<cmd>DapViewWatch<cr>", { desc = "[d]ebug [w]atch expr" })
--- stylua: ignore end

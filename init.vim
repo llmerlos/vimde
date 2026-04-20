@@ -2,19 +2,21 @@
 let g:env = {'lua' :  has('nvim')}
 let g:env.vsc = exists('g:vscode')
 let g:env.itj = has('ide')
-let g:env.nvm = g:env.lua && (env.vsc == 0)
-let g:env.vim = (g:env.lua == 0) && (env.itj == 0)
+let g:env.nvm = g:env.lua && (g:env.vsc == 0)
+let g:env.vim = (g:env.lua == 0) && (g:env.itj == 0)
 let g:env.emb = g:env.vsc || g:env.itj
 let g:env.ide = ($NVIM_APPNAME == 'vimde')
 
 " OPTIONS
 set nocompatible
-set viminfo="NONE"
+set viminfo=
 set noswapfile
 set incsearch
 set ignorecase
 set smartcase
-set clipboard^=unnamedplus
+if g:env.lua || g:env.itj || has('clipboard_working')
+    set clipboard^=unnamedplus
+endif
 set path+=**
 set gp=rg\ -n
 set smartindent
@@ -26,7 +28,7 @@ set scrolloff=12
 set splitright
 set splitbelow
 
-if g:env.vsc == 0 
+if g:env.vsc == 0
     syntax on
     filetype plugin indent on
     set title
