@@ -53,6 +53,10 @@
       "rev": "95b7a002d5dba1a42eb58f5fac5c565a485eefd0",
       "src": "https://github.com/nvim-tree/nvim-web-devicons"
     },
+    "render-markdown.nvim": {
+      "rev": "d67113f11384c0dad96fced2f7b91f1fc811e97f",
+      "src": "https://github.com/MeanderingProgrammer/render-markdown.nvim"
+    },
     "vim-sleuth": {
       "rev": "be69bff86754b1aa5adcbb527d7fcd1635a84080",
       "src": "https://github.com/tpope/vim-sleuth"

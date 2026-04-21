@@ -179,6 +179,7 @@ local languages = {
 	"lua",
 	"vimdoc",
 	"markdown",
+	"markdown_inline",
 	"c",
 }
 -- Its a no-op if the language is already installed
@@ -256,6 +257,7 @@ vim.pack.add({
 	"https://github.com/neovim/nvim-lspconfig", -- LSP config database
 	"https://github.com/mason-org/mason.nvim", -- Tool installer
 	"https://github.com/mason-org/mason-lspconfig.nvim", -- glues mason and lspconfig
+	"https://github.com/MeanderingProgrammer/render-markdown.nvim", -- requires ts: markdown & markdown_inline
 })
 
 require("blink.cmp").setup({
@@ -279,7 +281,10 @@ require("conform").setup({
 	default_format_opts = {
 		lsp_format = "fallback",
 	},
-	formatters_by_ft = { lua = { "stylua" } },
+	formatters_by_ft = {
+		lua = { "stylua" },
+		markdown = { "mdformat" },
+	},
 })
 
 vim.api.nvim_create_autocmd("BufWritePre", {
@@ -328,3 +333,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 require("mason").setup()
 require("mason-lspconfig").setup()
+
+require("render-markdown").setup({
+	completions = { lsp = { enabled = true } },
+})

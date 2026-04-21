@@ -49,7 +49,7 @@ set wildcharm=<Tab>
 noremap     <leader>vr         :source $MYVIMRC<CR>
 noremap     <leader>ve         :e $MYVIMRC<CR>
 if g:env.vsc
-    noremap <leader>vr         <Cmd>lua require('vscode-neovim').action("workbench.action.restartExtensionHost")<CR>
+    noremap <leader>vr         <Cmd>lua require("vscode-neovim").action("workbench.action.restartExtensionHost")<CR>
     noremap <leader>ve         :Edit $MYVIMRC<CR>
 endif
 
